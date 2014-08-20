@@ -76,13 +76,13 @@ Then we get
     };
 ```
 
-    <script id="candidator" type="text/x-jerrymarker-template">
-        <#if person.gender == 'M' >
-            He is ${person.name}
-        <#else>
-            She is ${person.name}
-        </#if>
-    </script>
+        <script id="candidator" type="text/x-jerrymarker-template">
+            <#if person.gender == 'M' >
+                He is ${person.name}
+            <#else>
+                She is ${person.name}
+            </#if>
+        </script>
 
 ```javascript
     var nd = document.getElementById('condidator');
@@ -112,16 +112,16 @@ Then we get
     };
 ```
 
-    <script id="candidator" type="text/x-jerrymarker-template">
-        <ul>
-        <#list people as person >
-            <li>
-                <span>person.name</span>
-                <span>person.job</span>
-            </li> 
-        </#list>
-        </ul>
-    </script>
+        <script id="candidator" type="text/x-jerrymarker-template">
+            <ul>
+            <#list people as person >
+                <li>
+                    <span>person.name</span>
+                    <span>person.job</span>
+                </li> 
+            </#list>
+            </ul>
+        </script>
 
 ### assignment
 
