@@ -76,7 +76,7 @@ Then we get
     };
 ```
 
-```html
+```
     <script id="candidator" type="text/x-jerrymarker-template">
         <#if person.gender == 'M' >
             He is ${person.name}
@@ -114,7 +114,7 @@ Then we get
     };
 ```
 
-```html
+```
     <script id="candidator" type="text/x-jerrymarker-template">
         <ul>
         <#list people as person >
