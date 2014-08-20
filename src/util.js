@@ -171,21 +171,20 @@
 
     function compile(input) {
          var root = this.parse(input);
-         var buffer = [];
-         var bufferIn = function(d) {
-             buffer.push(d);
-         };
-         var bufferOut = function() {
-             return buffer.join('');
-         };
 
          if (root) {
              var f = function(context) {
+                 var buffer = [];
+                 var bufferIn = function(d) {
+                     buffer.push(d);
+                 };
+                 var bufferOut = function() {
+                     return buffer.join('');
+                 };
                  f.context = context;
                  return travel(root, context, bufferIn, bufferOut);
              };
              f.ast = root;
-             f.buffer = buffer;
              return f;
          }
          return null;

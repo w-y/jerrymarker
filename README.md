@@ -1,4 +1,4 @@
-## jerrymarker.js
+# Jerrymarker.js
 ------
 
 Jerrymarker.js is a template engine in javascript, just like a [freemarker](http://freemarker.org/) which is written in java.
@@ -7,31 +7,31 @@ Jerrymarker = javascript + freemarker-- on same day.
 
 We are tired of coding in freemarker and then swiching to another js template for the ajax parts, so why not a combination of both.
 
-The code is written by a newbie who don't have a good taste about coding. Still Imporving...
+Whatever, we hope to keep it easily understandable to those who want to learn how the parser works.
 
-Whatever, we hope to keep it easily understandable to those who want to learn how template engine works, and we will keep improving it.
+The code is written by a newbie who don't have a good taste about coding. Still Imporving...
 
 Most importantly, just have fun and enjoy it.
 
-## Installing
+# Installing
 -----
 
 Installing jerrymarker is easy now. Simple download the javascript from the dist folder.
 
-## Usage
+# Usage
 -----
 
-### Interpolation
+## Interpolation
 
 ```javascript
     var context = {
-        name: 'bob'  
+        name: 'bob'
     };
-    
+
     var source = '<div> Hello ${name} ! </div>';
-    
+
     var template = jerrymarker.compile(source);
-    
+
     document.write(template.parse(context));
 ```
 Then we get
@@ -48,11 +48,11 @@ Object is ok
             age: 25
         }
     };
-    
+
     var source = 'name: ${person.name}, age: ${person.age}';
-    
+
     var template = jerrymarker.compile(source);
-    
+
     document.write(template.parse(context));
 ```
 
@@ -62,5 +62,10 @@ Then we get
     name: bob, age: 25
 ```
 
-### Directive
+## Directive
+
+### condition
+
+
+### loop
 
