@@ -32,7 +32,7 @@ Installing jerrymarker is easy now. Simple download the javascript from the dist
 
     var template = jerrymarker.compile(source);
 
-    document.write(template.parse(context));
+    document.write(template(context));
 ```
 Then we get
 
@@ -53,7 +53,7 @@ Object is ok
 
     var template = jerrymarker.compile(source);
 
-    document.write(template.parse(context));
+    document.write(template(context));
 ```
 
 Then we get
@@ -66,6 +66,66 @@ Then we get
 
 ### condition
 
+```javascript
+    var context = {
+        person: {
+            name: 'bob',
+            age: 25,
+            gender: 'M'
+        }
+    };
+```
+
+```html
+    <script id="candidator" type="text/x-jerrymarker-template">
+        <#if person.gender == 'M' >
+            He is ${person.name}
+        <#else>
+            She is ${person.name}
+        </#if>
+    </script>
+```
+
+```javascript
+    var nd = document.getElementById('condidator');
+    var source = nd.innerHTML;
+    var template = jerrymarker.compile(source);
+    doucument.write(template(context));
+```
 
 ### loop
+
+```javascript
+    var context = {
+        people: [
+            {
+                name: 'bob',
+                job: 'programmer'
+            },
+            {
+                name: 'hugo',
+                job: 'gardener'
+            },
+            {
+                name: 'jo',
+                job: 'student'
+            }
+        ]
+    };
+```
+
+```html
+    <script id="candidator" type="text/x-jerrymarker-template">
+        <ul>
+        <#list people as person >
+            <li>
+                <span>person.name</span>
+                <span>person.job</span>
+            </li> 
+        </#list>
+        </ul>
+    </script>
+```
+
+### assignment
 
