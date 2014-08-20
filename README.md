@@ -76,7 +76,6 @@ Then we get
     };
 ```
 
-```
     <script id="candidator" type="text/x-jerrymarker-template">
         <#if person.gender == 'M' >
             He is ${person.name}
@@ -84,7 +83,6 @@ Then we get
             She is ${person.name}
         </#if>
     </script>
-```
 
 ```javascript
     var nd = document.getElementById('condidator');
@@ -114,7 +112,6 @@ Then we get
     };
 ```
 
-```
     <script id="candidator" type="text/x-jerrymarker-template">
         <ul>
         <#list people as person >
@@ -125,7 +122,6 @@ Then we get
         </#list>
         </ul>
     </script>
-```
 
 ### assignment
 
