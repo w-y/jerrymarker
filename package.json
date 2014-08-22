@@ -14,7 +14,9 @@
     "grunt-contrib-qunit" : "~0.5.2",
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-watch" : "~v0.6.1",
-    "jison": "~0.4.13"
+    "jison": "~0.4.13",
+    "ebnf-parser": "*",
+    "lex-parser" : ""
   },
   "main": "lib/index.js",
   "bin": {

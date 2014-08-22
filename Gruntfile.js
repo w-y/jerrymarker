@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['src/fix-ie.js', 'src/parser.js', 'src/ast.js', 'src/util.js', 'src/main.js'],
+        src: ['src/fix-ie.js', 'src/jerrymarker.js', 'src/ast.js', 'src/util.js', 'src/main.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       files: ['test/**/*.html']
     },
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'src/ast.js', 'src/util.js', 'src/main.js', 'test/**/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -39,6 +39,12 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= jshint.files %>'],
       tasks: ['jshint', 'qunit']
+    },
+    compile: {
+      files: [{
+          src: ['src/parser.jison'],
+          dest: 'src/jerrymarker.js'
+      }]
     }
   });
 
@@ -48,8 +54,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
+  grunt.loadTasks('tasks');
+
   grunt.registerTask('test', ['jshint', 'qunit']);
 
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['compile', 'jshint', 'concat', 'uglify']);
 
 };

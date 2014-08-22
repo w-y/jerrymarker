@@ -112,8 +112,8 @@ contents
     : OBJECT DOT IDENTIFIER {
         $$ = new yy.ast.ObjectNode('.', $1, $3);
     }
-    | IDENTIFIER DOT IDENTIFIER {
-        $$ = new yy.ast.ObjectNode('.', $1, $3);
+    | IDENTIFIER {
+        $$ = new yy.ast.ObjectNode('value', $1);
     }
  ;
 
@@ -160,18 +160,6 @@ contents
     }
     | STRING INDENT {
         $$ = new yy.ast.ObjectNode('literalvalue', $1.slice(1,-1));
-    }
-    | IDENTIFIER {
-        $$ = new yy.ast.ObjectNode('value', $1);
-    }
-    | INDENT IDENTIFIER {
-        $$ = new yy.ast.ObjectNode('value', $2);
-    }
-    | IDENTIFIER INDENT {
-        $$ = new yy.ast.ObjectNode('value', $1);
-    }
-    | INDENT IDENTIFIER INDENT {
-        $$ = new yy.ast.ObjectNode('value', $2);
     }
     | OBJECT {
         $$ = new yy.ast.ObjectNode('value', $1);
@@ -294,12 +282,12 @@ ELSEIF
 
 LISTDIRECTIVE
     :
-    DIRECTIVE_LIST_START_TAG INDENT IDENTIFIER INDENT AS INDENT IDENTIFIER '>' contents DIRECTIVE_LIST_END_TAG
+    DIRECTIVE_LIST_START_TAG INDENT OBJECT INDENT AS INDENT OBJECT '>' contents DIRECTIVE_LIST_END_TAG
     {
         $$ = new yy.ast.ListNode($3, $7, $9);
     }
     |
-    DIRECTIVE_LIST_START_TAG INDENT IDENTIFIER INDENT AS INDENT IDENTIFIER INDENT '>' contents DIRECTIVE_LIST_END_TAG
+    DIRECTIVE_LIST_START_TAG INDENT OBJECT INDENT AS INDENT OBJECT INDENT '>' contents DIRECTIVE_LIST_END_TAG
     {
         $$ = new yy.ast.ListNode($3, $7, $10);
     }
@@ -308,12 +296,6 @@ LISTDIRECTIVE
 ASSIGNDIRECTIVE
     :
     DIRECTIVE_ASSIGN_START_TAG INDENT OBJECT '=' e '>'
-    {
-        var lv = new yy.ast.ObjectNode('value', $3);
-        $$ = new yy.ast.StatementNode('assign', lv, $5);
-    }
-    |
-    DIRECTIVE_ASSIGN_START_TAG INDENT IDENTIFIER '=' e '>'
     {
         var lv = new yy.ast.ObjectNode('value', $3);
         $$ = new yy.ast.StatementNode('assign', lv, $5);
