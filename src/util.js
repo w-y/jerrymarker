@@ -22,9 +22,6 @@
     }
     function travel_assign(l, r, c, newVal) {
         var q = [];
-        var i;
-        var curr, next;
-        curr = c;
         _travel_assign(l, r, c, newVal, q);
 
         _deep_assign(c, q, newVal);
@@ -123,15 +120,13 @@
     function travel_list(node, context, bufferIn, bufferOut) {
         var i;
         if (node.collection) {
-            var list = context[node.collection];
-            var old = context[node.item];
+            var collection = travel_object(node.collection, null, context);
 
-            for (i = 0; i < list.length; ++i) {
-                context[node.item] = list[i];
+            for (i = 0; i < collection.length; ++i) {
+                travel_assign(node.item, null, context, collection[i]); 
                 travel(node.statement, context, bufferIn, bufferOut);
             }
 
-            context[node.item] = old;
         }
     }
     function travel(node, context, bufferIn, bufferOut) {
@@ -148,13 +143,13 @@
                 bufferIn(node.v);
                 break;
             case 'object':
-                bufferIn(travel_object(node, null, context, bufferIn, bufferOut));
+                bufferIn(travel_object(node, null, context));
                 break;
             case 'iterpolation':
                 travel(node.v, context, bufferIn, bufferOut);
                 break;
             case 'expression':
-                bufferIn(travel_expression(node, null, context, bufferIn, bufferOut));
+                bufferIn(travel_expression(node, null, context));
                 break;
             case 'if':
                 travel_if(node, context, bufferIn, bufferOut);

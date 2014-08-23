@@ -3,6 +3,7 @@
 var jison = require('jison');
 var ebnfParser = require('ebnf-parser');
 var lexParser = require('lex-parser');
+var path = require('path');
 
 module.exports = function(grunt) {
 
@@ -27,8 +28,11 @@ module.exports = function(grunt) {
             var bnf = file.read(src, 'utf-8');
             var grammar = ebnfParser.parse(bnf);
 
-            var parser = new jison.Generator(grammar, {});
-            var js = parser.generate({});
+            var jerrymarker = new jison.Generator(grammar, {});
+            var js = jerrymarker.generate({
+                'moduleName' : f.module,
+                'module-type': 'js'
+            });
     
             file.write(dest, js);
             grunt.log.oklns('generate ' + dest);
