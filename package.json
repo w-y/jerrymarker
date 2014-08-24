@@ -2,7 +2,7 @@
   "name": "jerrymarker",
   "barename": "jerrymarker",
   "version": "0.0.1",
-  "description": "jerrymarker is a simple javascript template engine (our target: jerrymarker = js + freemarker)",
+  "description": "jerrymarker is a simple javascript template engine (Jerrymarker = javascript + freemarker-- on same day.)",
   "homepage": "http://www.jerrymarker.com/",
   "author": "w-y",
   "license": "MIT",

@@ -9,8 +9,6 @@ We are tired of coding in freemarker and then swiching to another js template fo
 
 Whatever, we hope to keep it easily understandable to those who want to learn how the parser works.
 
-The code is written by a newbie who don't have a good taste about coding. Still Imporving...
-
 Most importantly, just have fun and enjoy it.
 
 # Installing
