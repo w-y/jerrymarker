@@ -14,7 +14,12 @@ Most importantly, just have fun and enjoy it.
 # Installing
 -----
 
-Installing jerrymarker is easy now. Simple download the javascript from the dist folder.
+        grunt build  //to generate the parser javascript from lex/yacc rule
+
+        grunt       //concat the parser and util programs, generate the dist file
+
+
+Installing jerrymarker is easy now. Simple use the javascript from the dist folder. Or just download the javascript from [project site] (http://www.jerrymarker.com).
 
 # Usage
 -----
