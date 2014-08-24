@@ -38,10 +38,12 @@
         this.statement = statement;
         this.child = child;
     };
-    ast.ListNode = function ListNode(collection, item, statement) {
+    ast.ListNode = function ListNode(collection, alias, statement, isRange) {
         Node.call(this, 'list');
+
         this.collection = collection;
-        this.item = item;
+        this.alias = alias;
+        this.isRange = isRange || false;
         this.statement = statement;
     };
     ast.StatementNode = function StatementNode(op, lv, rv) {

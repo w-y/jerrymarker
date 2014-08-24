@@ -119,14 +119,28 @@
 
     function travel_list(node, context, bufferIn, bufferOut) {
         var i;
-        if (node.collection) {
-            var collection = travel_object(node.collection, null, context);
+        var collection = [];
+        if (node.isRange) {
+            if (node.collection && 2 === node.collection.length) {
+                var start = parseInt(travel_object(node.collection[0], null, context), 10);
+                var end = parseInt(travel_object(node.collection[1], null, context), 10);
+                var step = 1;
 
-            for (i = 0; i < collection.length; ++i) {
-                travel_assign(node.item, null, context, collection[i]); 
-                travel(node.statement, context, bufferIn, bufferOut);
+                while (start < end) {
+                    collection.push(start);
+                    start += step;
+                }
             }
+        }
+        else {
+            if (node.collection) {
+                collection = travel_object(node.collection, null, context);
+            }
+        }
 
+        for (i = 0; i < collection.length; ++i) {
+            travel_assign(node.alias, null, context, collection[i]);
+            travel(node.statement, context, bufferIn, bufferOut);
         }
     }
     function travel(node, context, bufferIn, bufferOut) {
@@ -176,7 +190,6 @@
                  var bufferOut = function() {
                      return buffer.join('');
                  };
-                 f.context = context;
                  return travel(root, context, bufferIn, bufferOut);
              };
              f.ast = root;

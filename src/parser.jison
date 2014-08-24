@@ -20,6 +20,7 @@
 <interpolation,if_drt,list_drt,assign_drt>[a-zA-Z][a-zA-Z_0-9]*             %{
                                                                                 return 'IDENTIFIER';
                                                                             %}
+<list_drt>".."                                                              return '..'
 <interpolation,if_drt,list_drt,assign_drt>"*"                               return '*'
 <interpolation,if_drt,list_drt,assign_drt>"/"                               return '/'
 <interpolation,if_drt,list_drt,assign_drt>"-"                               return '-'
@@ -290,6 +291,31 @@ LISTDIRECTIVE
     DIRECTIVE_LIST_START_TAG INDENT OBJECT INDENT AS INDENT OBJECT INDENT '>' contents DIRECTIVE_LIST_END_TAG
     {
         $$ = new yy.ast.ListNode($3, $7, $10);
+    }
+    |
+    DIRECTIVE_LIST_START_TAG INDENT OBJECT '..' OBJECT INDENT AS INDENT OBJECT '>' contents DIRECTIVE_LIST_END_TAG
+    {
+        $$ = new yy.ast.ListNode([$3, $5], $9, $11, true);
+    }
+    |
+    DIRECTIVE_LIST_START_TAG INDENT OBJECT '..' NUMBER INDENT AS INDENT OBJECT '>' contents DIRECTIVE_LIST_END_TAG
+    {
+        var end = new yy.ast.ObjectNode('literalvalue', Number($5));
+        $$ = new yy.ast.ListNode([$3, end], $9, $11, true);
+    }
+    |
+    DIRECTIVE_LIST_START_TAG INDENT NUMBER '..' OBJECT INDENT AS INDENT OBJECT '>' contents DIRECTIVE_LIST_END_TAG
+    {
+        var start = new yy.ast.ObjectNode('literalvalue', Number($3));
+        $$ = new yy.ast.ListNode([start, $5], $9, $11, true);
+    }
+    |
+    DIRECTIVE_LIST_START_TAG INDENT NUMBER '..' NUMBER INDENT AS INDENT OBJECT '>' contents DIRECTIVE_LIST_END_TAG
+    {
+        var start = new yy.ast.ObjectNode('literalvalue', Number($3));
+        var end = new yy.ast.ObjectNode('literalvalue', Number($5));
+
+        $$ = new yy.ast.ListNode([start, end], $9, $11, true);
     }
 ;
 
