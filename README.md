@@ -84,8 +84,11 @@ Then we get
 
 ```javascript
     var nd = document.getElementById('condidator');
+
     var source = nd.innerHTML;
+    
     var template = jerrymarker.compile(source);
+
     doucument.write(template(context));
 ```
 
@@ -123,9 +126,9 @@ Then we get
 
 ### assignment
 
-assign a number, string or expression to a var in the context:
+you assign a number, string or expression to a var in the template:
 
-        <script id="test-list" type="text/x-jerrymarker-template">
+        <script id="test-assign" type="text/x-jerrymarker-template">
             <#assign x = 2 >
             <#list x..10 as i>
                 ${i}
@@ -136,6 +139,17 @@ assign a number, string or expression to a var in the context:
             <#assign z = (1+2)*3 >
             ${z}
         </script>
+
+```javascript
+    
+    var nd = document.getElementById('test-assign');
+
+    var source = nd.innerHTML;
+    
+    var template = jerrymarker.compile(source);
+
+    doucument.write(template({}));
+```
 
 then we get 
 ```html
