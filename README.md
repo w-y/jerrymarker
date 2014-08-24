@@ -123,3 +123,24 @@ Then we get
 
 ### assignment
 
+assign a number, string or expression to a var in the context:
+
+        <script id="test-list" type="text/x-jerrymarker-template">
+            <#assign x = 2 >
+            <#list x..10 as i>
+                ${i}
+            </#list>
+
+            <#assign y = 'hello' >
+            ${y}
+            <#assign z = (1+2)*3 >
+            ${z}
+        </script>
+
+then we get 
+```html
+    2 3 4 5 6 7 8 9
+    hello
+    9
+```
+

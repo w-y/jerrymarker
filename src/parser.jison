@@ -137,6 +137,12 @@ contents
     | '(' e ')' {
         $$ = new yy.ast.ExpressionNode('eval', $2);
     }
+    | INDENT '(' e ')' {
+        $$ = new yy.ast.ExpressionNode('eval', $3);
+    }
+    | '(' e ')' INDENT{
+        $$ = new yy.ast.ExpressionNode('eval', $2);
+    }
     | NUMBER {
         $$ = new yy.ast.ObjectNode('literalvalue', Number(yytext));
     }
@@ -325,5 +331,11 @@ ASSIGNDIRECTIVE
     {
         var lv = new yy.ast.ObjectNode('value', $3);
         $$ = new yy.ast.StatementNode('assign', lv, $5);
+    }
+    |
+    DIRECTIVE_ASSIGN_START_TAG INDENT OBJECT INDENT '=' e '>'
+    {
+        var lv = new yy.ast.ObjectNode('value', $3);
+        $$ = new yy.ast.StatementNode('assign', lv, $6);
     }
 ;
