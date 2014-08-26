@@ -3,7 +3,7 @@
 
 Jerrymarker.js is a template engine in javascript, just like a [freemarker](http://freemarker.org/) which is written in java.
 
-Jerrymarker = javascript + freemarker-- on same day.
+Jerrymarker = javascript + freemarker-- on some day.
 
 We are tired of coding in freemarker and then swiching to another js template for the ajax parts, so why not a combination of both.
 
@@ -122,8 +122,8 @@ Then we get
             <ul>
             <#list people as person >
                 <li>
-                    <span>person.name</span>
-                    <span>person.job</span>
+                    <span>${person.name}</span>
+                    <span>${person.job}</span>
                 </li> 
             </#list>
             </ul>
