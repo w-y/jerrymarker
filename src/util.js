@@ -91,6 +91,8 @@
                         return (travel_expression(l.v1, null, context) / travel_expression(l.v2, null, context));
                     case 'eval':
                         return (travel_expression(l.v1, null, context));
+                    case 'uminus':
+                        return -(travel_expression(l.v1, null, context));
                 }
                 break;
             case 'object':

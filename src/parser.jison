@@ -137,6 +137,12 @@ contents
     | '(' e ')' {
         $$ = new yy.ast.ExpressionNode('eval', $2);
     }
+    | '-' e %prec UMINUS {
+        $$ = new yy.ast.ExpressionNode('uminus', $2);
+    }
+    | INDENT '-' e %prec UMINUS {
+        $$ = new yy.ast.ExpressionNode('uminus', $3);
+    }
     | INDENT '(' e ')' {
         $$ = new yy.ast.ExpressionNode('eval', $3);
     }
