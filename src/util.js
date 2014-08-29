@@ -106,7 +106,7 @@
             } else {
                 var curr = root;
 
-                while (curr.child) {
+                while (curr) {
                     var v = travel_expression(curr.cond, null, context);
                     if (v) {
                         travel(curr.statement, context, bufferIn, bufferOut);
