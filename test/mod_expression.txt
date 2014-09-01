@@ -1,0 +1,9 @@
+<#assign x = 0 >
+
+<#list x..10 as i>
+
+<#if i % 2 == 0 >
+    ${i} is even
+</#if>
+
+</#list>

@@ -23,6 +23,7 @@
 <list_drt>".."                                                                  return '..'
 <interpolation,if_drt,list_drt,assign_drt,exp>"*"                               return '*'
 <interpolation,if_drt,list_drt,assign_drt,exp>"/"                               return '/'
+<interpolation,if_drt,list_drt,assign_drt,exp>"%"                               return '%'
 <interpolation,if_drt,list_drt,assign_drt,exp>"-"                               return '-'
 <interpolation,if_drt,list_drt,assign_drt,exp>"+"                               return '+'
 <interpolation,if_drt,list_drt,assign_drt,exp>"||"                              %{ 
@@ -92,6 +93,7 @@
 %left '||' '&&'
 %left '>' '<' '>=' '<=' '=='
 %left '+' '-'
+%left '%'
 %left '*' '/'
 %left '='
 %left UMINUS
@@ -136,6 +138,9 @@ contents
         $$ = new yy.ast.ExpressionNode($2, $1, $3);
     }
     | e '*' e {
+        $$ = new yy.ast.ExpressionNode($2, $1, $3);
+    }
+    | e '%' e {
         $$ = new yy.ast.ExpressionNode($2, $1, $3);
     }
     | e '==' e {
