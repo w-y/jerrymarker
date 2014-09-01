@@ -1,0 +1,8 @@
+<#assign a = 99>
+<#assign b =1001 >
+
+<#if (a>100 ) && (b < 1000) || a > 100 >
+    test
+<#else>
+    hi
+</#if>

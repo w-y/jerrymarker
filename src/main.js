@@ -7,7 +7,9 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
             process.exit(1);
         }
         var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-        return exports.parser.parse(source);
+        var template = exports.parser.compile(source);
+        var context = {};
+        console.log(template(context));
     };
     if (typeof module !== 'undefined' && require.main === module) {
         exports.main(process.argv.slice(1));
