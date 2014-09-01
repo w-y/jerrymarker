@@ -26,16 +26,15 @@
 <interpolation,if_drt,list_drt,assign_drt,exp>"%"                               return '%'
 <interpolation,if_drt,list_drt,assign_drt,exp>"-"                               return '-'
 <interpolation,if_drt,list_drt,assign_drt,exp>"+"                               return '+'
-<interpolation,if_drt,list_drt,assign_drt,exp>"||"                              %{ 
+<interpolation,if_drt,list_drt,assign_drt,exp>"||"                              %{
                                                                                     return '||';
                                                                                 %}
-<interpolation,if_drt,list_drt,assign_drt,exp>"&&"                              %{ 
+<interpolation,if_drt,list_drt,assign_drt,exp>"&&"                              %{
                                                                                     return '&&';
                                                                                 %}
 <interpolation,if_drt,list_drt,assign_drt,exp>"<="                              return '<='
 <interpolation,if_drt,list_drt,assign_drt,exp>">="                              return '>='
 <interpolation,if_drt,list_drt,assign_drt,exp>"<"                               return '<'
-<interpolation,if_drt,list_drt,assign_drt,exp>"!"                               return '!'
 <interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"("                         %{
                                                                                     this.begin('exp');
                                                                                     return '(';
@@ -47,7 +46,9 @@
                                                                                 %}
 <interpolation,if_drt,list_drt,assign_drt,exp>"."                               return 'DOT'
 <interpolation,if_drt,list_drt,assign_drt,exp>"=="                              return '=='
+<interpolation,if_drt,list_drt,assign_drt,exp>"!="                              return '!='
 <assign_drt>"="                                                                 return '='
+<interpolation,if_drt,list_drt,assign_drt,exp>"!"                               return '!'
 
 "<#if"                              %{
                                         this.begin('if_drt');
@@ -91,12 +92,13 @@
 /lex
 
 %left '||' '&&'
-%left '>' '<' '>=' '<=' '=='
+%left '>' '<' '>=' '<=' '==' '!='
 %left '+' '-'
 %left '%'
 %left '*' '/'
 %left '='
 %left UMINUS
+%left '!'
 %left '(' ')'
 %start html
 
@@ -146,6 +148,9 @@ contents
     | e '==' e {
         $$ = new yy.ast.ExpressionNode($2, $1, $3);
     }
+    | e '!=' e {
+        $$ = new yy.ast.ExpressionNode($2, $1, $3);
+    }
     | e '-' e {
         $$ = new yy.ast.ExpressionNode($2, $1, $3);
     }
@@ -178,6 +183,12 @@ contents
     }
     | INDENT '-' e %prec UMINUS {
         $$ = new yy.ast.ExpressionNode('uminus', $3);
+    }
+    | '!' e {
+        $$ = new yy.ast.ExpressionNode('unot', $2);
+    }
+    | INDENT '!' e {
+        $$ = new yy.ast.ExpressionNode('unot', $3);
     }
     | NUMBER {
         $$ = new yy.ast.ObjectNode('literalvalue', Number(yytext));
@@ -215,51 +226,6 @@ contents
     }
     | INDENT OBJECT INDENT {
         $$ = new yy.ast.ObjectNode('value', $2);
-    }
-    | INDENT '+' {
-        $$ = $2;
-    }
-    | '+' INDENT {
-        $$ = $1;
-    }
-    | INDENT '+' INDENT {
-        $$ = $2;
-    }
-    | INDENT '*' {
-        $$ = $2;
-    }
-    | '*' INDENT {
-        $$ = $1;
-    }
-    | INDENT '*' INDENT {
-        $$ = $2;
-    }
-    | INDENT '-' {
-        $$ = $2;
-    }
-    | '-' INDENT {
-        $$ = $1;
-    }
-    | INDENT '-' INDENT {
-        $$ = $2;
-    }
-    | INDENT '/' {
-        $$ = $2;
-    }
-    | '/' INDENT {
-        $$ = $1;
-    }
-    | INDENT '/' INDENT {
-        $$ = $2;
-    }
-    | INDENT '==' {
-        $$ = $2;
-    }
-    | '==' INDENT {
-        $$ = $1;
-    }
-    | INDENT '==' INDENT {
-        $$ = $2;
     }
 ;
 
