@@ -5,6 +5,12 @@
 
     this.compile = compile;
 
+    /* jshint ignore:start */
+    function existy(v) {
+        return null != v;
+    }
+    /* jshint ignore:end */
+
     function travel_statement(node, context) {
         switch(node.op) {
             case 'assign':
@@ -72,7 +78,11 @@
             case 'literalvalue':
                 return l.v1;
             default:
-                return c[l];
+                if (c) {
+                    return c[l];
+                } else {
+                    return undefined;
+                }
         }
     }
     function travel_expression(l, r, context) {
@@ -100,9 +110,14 @@
                     case 'unot':
                         return !(travel_expression(l.v1, null, context));
                     case 'exist':
-                        /* jshint ignore:start */
-                        return travel_expression(l.v1, null, context) != null; 
-                        /* jshint ignore:end */
+                        return existy(travel_expression(l.v1, null, context));
+                    case 'existset':
+                        var temp = travel_expression(l.v1, null, context);
+                        if (!existy(temp)) {
+                            var spare = travel_expression(l.v2, null, context);
+                            return spare;
+                        }
+                        return;
                     case '||' :
                         return travel_expression(l.v1, null, context) || travel_expression(l.v2, null, context);
                     case '&&' :

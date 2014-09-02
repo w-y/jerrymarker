@@ -48,7 +48,7 @@
 <interpolation,if_drt,list_drt,assign_drt,exp>"=="                              return '=='
 <interpolation,if_drt,list_drt,assign_drt,exp>"!="                              return '!='
 <assign_drt>"="                                                                 return '='
-<interpolation,if_drt,list_drt,assign_drt,exp>"!"                               return '!'
+<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"!"                               return '!'
 
 <interpolation,if_drt,list_drt,assign_drt,exp>"??"[ \t]*                        return '??'
 
@@ -194,6 +194,12 @@ contents
     }
     | e '??' %prec EXISTS {
         $$ = new yy.ast.ExpressionNode('exist', $1);
+    }
+    | OBJECT '!' e %prec EXISTS {
+        $$ = new yy.ast.ExpressionNode('existset', $1, $3);
+    }
+    | INDENT OBJECT '!' e %prec EXISTS {
+        $$ = new yy.ast.ExpressionNode('existset', $2, $4);
     }
     | INDENT '!' e %prec NOT {
         $$ = new yy.ast.ExpressionNode('unot', $3);
