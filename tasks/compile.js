@@ -14,7 +14,7 @@ module.exports = function(grunt) {
     grunt.registerTask('compile', 'jison rules to js', function() {
 
         config.data.compile.files.forEach(function(f) {
-            
+
             var src = f.src.shift();
 
             if (!src) {
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                 'moduleName' : f.module,
                 'module-type': 'js'
             });
-    
+
             file.write(dest, js);
             grunt.log.oklns('generate ' + dest);
         });

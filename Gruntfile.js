@@ -42,9 +42,15 @@ module.exports = function(grunt) {
     },
     compile: {
       files: [{
-          src: ['src/parser.jison'],
-          dest: 'src/parser.js',
-          module: 'jerrymarker'
+        src: ['src/parser.jison'],
+        dest: 'src/parser.compiled.js',
+        module: 'jerrymarker'
+      }]
+    },
+    preprocessor: {
+      files: [{
+        src: ['src/parser.compiled.js'],
+        dest: 'src/parser.js'
       }]
     }
   });
@@ -54,12 +60,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-sed');
 
   grunt.loadTasks('tasks');
 
   grunt.registerTask('test', ['jshint', 'qunit']);
 
-  grunt.registerTask('build', ['compile']);
+  grunt.registerTask('build', ['compile', 'preprocessor']);
 
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
 

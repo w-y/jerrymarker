@@ -50,6 +50,8 @@
 <assign_drt>"="                                                                 return '='
 <interpolation,if_drt,list_drt,assign_drt,exp>"!"                               return '!'
 
+<interpolation,if_drt,list_drt,assign_drt,exp>"??"[ \t]*                        return '??'
+
 "<#if"                              %{
                                         this.begin('if_drt');
                                         return 'DIRECTIVE_IF_START_TAG';
@@ -97,8 +99,11 @@
 %left '%'
 %left '*' '/'
 %left '='
-%left UMINUS
-%left '!'
+%left '??'
+
+%right UMINUS
+%right NOT
+%left EXISTS
 %left '(' ')'
 %start html
 
@@ -184,10 +189,13 @@ contents
     | INDENT '-' e %prec UMINUS {
         $$ = new yy.ast.ExpressionNode('uminus', $3);
     }
-    | '!' e {
+    | '!' e %prec NOT {
         $$ = new yy.ast.ExpressionNode('unot', $2);
     }
-    | INDENT '!' e {
+    | e '??' %prec EXISTS {
+        $$ = new yy.ast.ExpressionNode('exist', $1);
+    }
+    | INDENT '!' e %prec NOT {
         $$ = new yy.ast.ExpressionNode('unot', $3);
     }
     | NUMBER {

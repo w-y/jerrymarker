@@ -99,6 +99,10 @@
                         return -(travel_expression(l.v1, null, context));
                     case 'unot':
                         return !(travel_expression(l.v1, null, context));
+                    case 'exist':
+                        /* jshint ignore:start */
+                        return travel_expression(l.v1, null, context) != null; 
+                        /* jshint ignore:end */
                     case '||' :
                         return travel_expression(l.v1, null, context) || travel_expression(l.v2, null, context);
                     case '&&' :

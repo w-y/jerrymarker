@@ -1,0 +1,5 @@
+<#assign y = 101>
+
+<#if !x?? && (y > 100) >
+    x is greater than 100
+</#if>
