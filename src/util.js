@@ -17,10 +17,10 @@
                 var v;
                 switch(node.rv.type) {
                     case 'expression':
-                        v = travel_expression(node.rv);
+                        v = travel_expression(node.rv, null, context);
                         break;
                     case 'object':
-                        v = travel_object(node.rv);
+                        v = travel_object(node.rv, null, context);
                         break;
                 }
                 travel_assign(node.lv, null, context, v);
