@@ -9,7 +9,7 @@ Jerrymarker's preject site: http://www.jerrymarker.com.
 
 ## Building & Installing
     grunt build  //to generate the parser javascript from lex/yacc rule
- 
+
     grunt  //concat the parser and other util codes to generate the dist js files
 
 Installing jerrymarker is easy now. Simple use the javascript from the dist folder. Or just download the javascript from [project site] (http://www.jerrymarker.com).
@@ -67,15 +67,22 @@ Jerrymarker now only support 2 literal value types as Number and String.
 You can declare a variable via assign directive, the lexical rule is just like javascript(letters or letters plus digits). So you can use v = xx, v1 = xx, but not 1v = xx. Boolean, Array and Hash types are in schedule now.
 
 ## Interpolations
-The format of interpolations is \${expression}, where expression can be all kind of expression (e.g. \${100 + x}).
+The format of interpolations is
+
+    ${expression}
+
+where expression can be all kind of expression. e.g.
+
+    ${(100 + x) * -y}
+
 
 ## Expressions
 When you supply value for interpolations: The usage of interpolations is ${expression} where expression gives the value you want to insert into the output as text.
 
     ${x*2+(3+4)*5}
 
-When you supply a value for the directive parameter: You have already seen the if directive in the Getting Started section. The syntax of this directive is: 
-    
+When you supply a value for the directive parameter: You have already seen the if directive in the Getting Started section. The syntax of this directive is:
+
     <#if expression>...</#if>
 
     <#if ((x < 100) && !(x <= 50)) >
@@ -90,7 +97,7 @@ Use the build-in ?html to encode the html special chars.
 
     <#assign x = "<span>Hi</span>" >
     ${x}
-     
+
     <#assign y = "<span>Hi</span>"?html >
     ${y}
 
@@ -116,7 +123,7 @@ Use x!y in interploation
     <#if x > 100 >
         ${x}
     </#if>
-    
+
     //corrected
     <#if (x > 100) >
         ${x}
@@ -176,7 +183,7 @@ The output will be
     </ul>
 
 ## Directive Assign
-    
+
 Now only support <#assign name=value>, name: name of the variable. It is not expression, value: the value to store. Expression.
 
     <#assign counter = 0>
