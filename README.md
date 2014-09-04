@@ -1,11 +1,9 @@
 # Jerrymarker.js
 ------
 
-Jerrymarker.js is a template engine in javascript, just like a [freemarker](http://freemarker.org/) which is written in java.
+Jerrymarker is a template engine in javascript. Using jison to generate the js code, which makes it easy to scale the lexical and grammer rules to build a more powerful parser. Jerrymarker will build a simple syntax tree for your template and use your context to traverse and render it whenever you want. The rules in jerrymarker template is just like what is in [freemarker](http://freemarker.org/) which is a template engine in Java.
 
-Jerrymarker = javascript + freemarker-- on some day.
-
-We are tired of coding in freemarker and then swiching to another js template for the ajax parts, so why not a combination of both.
+We are tired of coding in freemarker and then swiching to another js template for the ajax parts, so why not a combination of both. In the future you can use nodejs to render the template. Jerrymarker's target is "jerrymarker = javascript + freemarker-- ++".
 
 Whatever, we hope to keep it easily understandable to those who want to learn how the parser works.
 
@@ -16,7 +14,7 @@ Most importantly, just have fun and enjoy it.
 
         grunt build  //to generate the parser javascript from lex/yacc rule
 
-        grunt       //concat the parser and util programs, generate the dist file
+        grunt       //concat the parser and other util codes to generate the dist js files
 
 
 Installing jerrymarker is easy now. Simple use the javascript from the dist folder. Or just download the javascript from [project site] (http://www.jerrymarker.com).

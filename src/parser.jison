@@ -51,6 +51,7 @@
 <interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"!"                               return '!'
 
 <interpolation,if_drt,list_drt,assign_drt,exp>"??"[ \t]*                        return '??'
+<interpolation,if_drt,list_drt,assign_drt,exp>"?html"[ \t]*                     return '?html'
 
 "<#if"                              %{
                                         this.begin('if_drt');
@@ -99,7 +100,7 @@
 %left '%'
 %left '*' '/'
 %left '='
-%left '??'
+%left '??' '?html'
 
 %right UMINUS
 %right NOT
@@ -194,6 +195,9 @@ contents
     }
     | e '??' %prec EXISTS {
         $$ = new yy.ast.ExpressionNode('exist', $1);
+    }
+    | e '?html' {
+        $$ = new yy.ast.ExpressionNode('tohtml', $1);
     }
     | OBJECT '!' e %prec EXISTS {
         $$ = new yy.ast.ExpressionNode('existset', $1, $3);

@@ -1,0 +1,5 @@
+<#assign x = "<span>Hi</span>" >
+${x}
+
+<#assign y = "<span>Hi</span>"?html >
+${y}

@@ -10,7 +10,12 @@
         return null != v;
     }
     /* jshint ignore:end */
-
+    function htmlspecialchars(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+    }
+    function htmlspecialchars_decode(str) {
+        return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, '\'');
+    }
     function travel_statement(node, context) {
         switch(node.op) {
             case 'assign':
@@ -118,6 +123,8 @@
                             return spare;
                         }
                         return;
+                    case 'tohtml':
+                        return htmlspecialchars((travel_expression(l.v1, null, context)));
                     case '||' :
                         return travel_expression(l.v1, null, context) || travel_expression(l.v2, null, context);
                     case '&&' :
