@@ -1,0 +1,5 @@
+<#assign x= true >
+${x}
+<#if x >
+    x is true
+</#if>

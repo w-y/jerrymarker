@@ -17,6 +17,8 @@
 <interpolation,if_drt,list_drt,assign_drt,exp>[0-9]+("."[0-9]+)?\b              return 'NUMBER'
 <interpolation,if_drt,list_drt,assign_drt,exp>\"[^"\n]*["\n]|\'[^'\n]*['\n]     return 'STRING'
 
+<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"true"                      return 'TRUE'
+<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"false"                     return 'FALSE'
 <interpolation,if_drt,list_drt,assign_drt,exp>[a-zA-Z][a-zA-Z_0-9]*             %{
                                                                                     return 'IDENTIFIER';
                                                                                 %}
@@ -232,6 +234,12 @@ contents
     }
     | STRING INDENT {
         $$ = new yy.ast.ObjectNode('literalvalue', $1.slice(1,-1));
+    }
+    | TRUE {
+        $$ = new yy.ast.ObjectNode('literalvalue', true);
+    }
+    | FALSE {
+        $$ = new yy.ast.ObjectNode('literalvalue', false);
     }
     | OBJECT {
         $$ = new yy.ast.ObjectNode('value', $1);
