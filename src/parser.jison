@@ -42,6 +42,7 @@
                                                                                     return '(';
                                                                                 %}
 <exp>">"                                                                        return '>'
+<exp>","                                                                        return ','
 <interpolation,if_drt,list_drt,assign_drt,exp>")"[ \t]*                         %{
                                                                                     this.popState();
                                                                                     return ')';
@@ -54,6 +55,7 @@
 
 <interpolation,if_drt,list_drt,assign_drt,exp>"??"[ \t]*                        return '??'
 <interpolation,if_drt,list_drt,assign_drt,exp>"?html"[ \t]*                     return '?html'
+<interpolation,if_drt,list_drt,assign_drt,exp>"?string"[ \t]*                     return '?string'
 
 "<#if"                              %{
                                         this.begin('if_drt');
@@ -102,7 +104,7 @@
 %left '%'
 %left '*' '/'
 %left '='
-%left '??' '?html'
+%left '??' '?html' '?string'
 
 %right UMINUS
 %right NOT
@@ -200,6 +202,9 @@ contents
     }
     | e '?html' {
         $$ = new yy.ast.ExpressionNode('tohtml', $1);
+    }
+    | e '?string' '(' e ',' e ')' {
+        $$ = new yy.ast.ExpressionNode('trueset', $1, $4, $6);
     }
     | OBJECT '!' e %prec EXISTS {
         $$ = new yy.ast.ExpressionNode('existset', $1, $3);

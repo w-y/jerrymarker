@@ -4,11 +4,13 @@
     function Node(type) {
         this.type = type;
     }
-    ast.ExpressionNode = function ExpressionNode(op, v1, v2) {
+    ast.ExpressionNode = function ExpressionNode(op, v1, v2, v3) {
         Node.call(this, 'expression');
         this.op = op;
         this.v1 = v1;
         this.v2 = v2;
+
+        this.v3 = v3;
     };
     ast.ObjectNode = function ObjectNode(op, v1, v2) {
         Node.call(this, 'object');
