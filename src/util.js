@@ -5,6 +5,8 @@
 
     this.compile = compile;
 
+    var nativeIsArray = Array.isArray;
+
     /* jshint ignore:start */
     function existy(v) {
         return null != v;
@@ -16,6 +18,80 @@
     function htmlspecialchars_decode(str) {
         return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, '\'');
     }
+    var isArray = nativeIsArray || function(obj) {
+        return toString.call(obj) === '[object Array]';
+    };
+    /* jshint ignore:start */
+    function deepCopy(src, /* INTERNAL */ _visited) {
+        if(src == null || typeof(src) !== 'object'){
+            return src;
+        }
+
+        // Initialize the visited objects array if needed
+        // This is used to detect cyclic references
+        if (_visited == undefined){
+            _visited = [];
+        }
+        // Otherwise, ensure src has not already been visited
+        else {
+            var i, len = _visited.length;
+            for (i = 0; i < len; i++) {
+                // If src was already visited, don't try to copy it, just return the reference
+                if (src === _visited[i]) {
+                    return src;
+                }
+            }
+        }
+
+        // Add this object to the visited array
+        _visited.push(src);
+
+        //Honor native/custom clone methods
+        if(typeof src.clone == 'function'){
+            return src.clone(true);
+        }
+
+        //Special cases:
+        //Array
+        if (Object.prototype.toString.call(src) == '[object Array]') {
+            //[].slice(0) would soft clone
+            ret = src.slice();
+            var i = ret.length;
+            while (i--){
+                ret[i] = deepCopy(ret[i], _visited);
+            }
+            return ret;
+        }
+        //Date
+        if (src instanceof Date){
+            return new Date(src.getTime());
+        }
+        //RegExp
+        if(src instanceof RegExp){
+            return new RegExp(src);
+        }
+        //DOM Elements
+        if(src.nodeType && typeof src.cloneNode == 'function'){
+            return src.cloneNode(true);
+        }
+
+        //If we've reached here, we have a regular object, array, or function
+
+        //make sure the returned object has the same prototype as the original
+        var proto = (Object.getPrototypeOf ? Object.getPrototypeOf(src): src.__proto__);
+        if (!proto) {
+            proto = src.constructor.prototype; //this line would probably only be reached by very old browsers 
+        }
+        var ret = Object.create(proto);
+
+        for(var key in src){
+            //Note: this does NOT preserve ES5 property attributes like 'writable', 'enumerable', etc.
+            //For an example of how this could be modified to do so, see the singleMixin() function
+            ret[key] = deepCopy(src[key], _visited);
+        }
+        return ret;
+    }
+    /* jshint ignore:end*/
     function travel_statement(node, context) {
         switch(node.op) {
             case 'assign':
@@ -73,6 +149,7 @@
     }
     function travel_object(l, r, c) {
         var v;
+        var i = 0;
         switch (l.op) {
             case '.':
                 v = travel_object(l.v1, l.v2, c);
@@ -82,6 +159,12 @@
                 return v;
             case 'literalvalue':
                 return l.v1;
+            case 'array':
+                var temp = [];
+                for (i = 0; i < l.v1.length; ++i) {
+                    temp.push(travel_object(l.v1[i], null, c));
+                }
+                return temp;
             default:
                 if (c) {
                     return c[l];
@@ -91,13 +174,37 @@
         }
     }
     function travel_expression(l, r, context) {
+        var v1 = null;
+        var v2 = null;
+        var temp = null;
+        var i = 0;
         switch(l.type) {
             case 'expression':
                 switch(l.op) {
                     case '*':
                         return travel_expression(l.v1, null, context) * travel_expression(l.v2, null, context);
                     case '+':
-                        return travel_expression(l.v1, null, context) + travel_expression(l.v2, null, context);
+                        v1 = travel_expression(l.v1, null, context);
+                        v2 = travel_expression(l.v2, null, context);
+
+                        if (isArray(v1)) {
+                            i = 0;
+                            temp = [];
+
+                            for (i = 0; i < v1.length; i++) {
+                                temp.push(deepCopy(v1[i]));
+                            }
+
+                            if (isArray(v2)) {
+                               for (i = 0; i < v2.length; i++) {
+                                   temp.push(deepCopy(v2[i]));
+                               }
+                            } else {
+                                temp.push(deepCopy(v2));
+                            }
+                            return temp;
+                        }
+                        return v1 + v2;
                     case '%':
                         return travel_expression(l.v1, null, context) % travel_expression(l.v2, null, context);
                     case '==':
@@ -117,7 +224,7 @@
                     case 'exist':
                         return existy(travel_expression(l.v1, null, context));
                     case 'existset':
-                        var temp = travel_expression(l.v1, null, context);
+                        temp = travel_expression(l.v1, null, context);
                         if (!existy(temp)) {
                             var spare = travel_expression(l.v2, null, context);
                             return spare;

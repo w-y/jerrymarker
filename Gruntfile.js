@@ -67,6 +67,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', ['compile', 'preprocessor']);
 
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'build', 'concat', 'uglify']);
 
+  grunt.registerTask('generate', ['jshint', 'concat', 'uglify']);
 };

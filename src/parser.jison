@@ -1,7 +1,7 @@
 /* parser lexical grammar */
 %lex
 
-%s if_drt list_drt assign_drt interpolation exp logic_op
+%s if_drt list_drt assign_drt interpolation exp logic_op array
 
 %%
 
@@ -14,48 +14,57 @@
                                         return '}';
                                     %}
 "as"                                return 'AS'
-<interpolation,if_drt,list_drt,assign_drt,exp>[0-9]+("."[0-9]+)?\b              return 'NUMBER'
-<interpolation,if_drt,list_drt,assign_drt,exp>\"[^"\n]*["\n]|\'[^'\n]*['\n]     return 'STRING'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>[0-9]+("."[0-9]+)?\b              return 'NUMBER'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>\"[^"\n]*["\n]|\'[^'\n]*['\n]     return 'STRING'
 
-<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"true"                      return 'TRUE'
-<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"false"                     return 'FALSE'
-<interpolation,if_drt,list_drt,assign_drt,exp>[a-zA-Z][a-zA-Z_0-9]*             %{
-                                                                                    return 'IDENTIFIER';
+<interpolation,if_drt,list_drt,assign_drt,exp,array>[ \t]*"true"                      return 'TRUE'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>[ \t]*"false"                     return 'FALSE'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>[a-zA-Z][a-zA-Z_0-9]*             %{
+                                                                                        return 'IDENTIFIER';
+                                                                                      %}
+<list_drt>".."                                                                        return '..'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"*"                               return '*'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"/"                               return '/'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"%"                               return '%'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"-"                               return '-'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"+"                               return '+'
+
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"["                               %{
+                                                                                        this.begin('array');
+                                                                                        return '[';
+                                                                                      %}
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"]"                         %{
+                                                                                    this.popState();
+                                                                                    return ']';
                                                                                 %}
-<list_drt>".."                                                                  return '..'
-<interpolation,if_drt,list_drt,assign_drt,exp>"*"                               return '*'
-<interpolation,if_drt,list_drt,assign_drt,exp>"/"                               return '/'
-<interpolation,if_drt,list_drt,assign_drt,exp>"%"                               return '%'
-<interpolation,if_drt,list_drt,assign_drt,exp>"-"                               return '-'
-<interpolation,if_drt,list_drt,assign_drt,exp>"+"                               return '+'
-<interpolation,if_drt,list_drt,assign_drt,exp>"||"                              %{
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"||"                        %{
                                                                                     return '||';
                                                                                 %}
-<interpolation,if_drt,list_drt,assign_drt,exp>"&&"                              %{
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"&&"                        %{
                                                                                     return '&&';
                                                                                 %}
-<interpolation,if_drt,list_drt,assign_drt,exp>"<="                              return '<='
-<interpolation,if_drt,list_drt,assign_drt,exp>">="                              return '>='
-<interpolation,if_drt,list_drt,assign_drt,exp>"<"                               return '<'
-<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"("                         %{
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"<="                              return '<='
+<interpolation,if_drt,list_drt,assign_drt,exp,array>">="                              return '>='
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"<"                               return '<'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>[ \t]*"("                   %{
                                                                                     this.begin('exp');
                                                                                     return '(';
                                                                                 %}
 <exp>">"                                                                        return '>'
-<exp>","                                                                        return ','
-<interpolation,if_drt,list_drt,assign_drt,exp>")"[ \t]*                         %{
+<exp,assign_drt,array>[ \t]*","                                                             return ','
+<interpolation,if_drt,list_drt,assign_drt,exp,array>")"[ \t]*                   %{
                                                                                     this.popState();
                                                                                     return ')';
                                                                                 %}
-<interpolation,if_drt,list_drt,assign_drt,exp>"."                               return 'DOT'
-<interpolation,if_drt,list_drt,assign_drt,exp>"=="                              return '=='
-<interpolation,if_drt,list_drt,assign_drt,exp>"!="                              return '!='
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"."                         return 'DOT'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"=="                        return '=='
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"!="                        return '!='
 <assign_drt>"="                                                                 return '='
-<interpolation,if_drt,list_drt,assign_drt,exp>[ \t]*"!"                               return '!'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>[ \t]*"!"                   return '!'
 
-<interpolation,if_drt,list_drt,assign_drt,exp>"??"[ \t]*                        return '??'
-<interpolation,if_drt,list_drt,assign_drt,exp>"?html"[ \t]*                     return '?html'
-<interpolation,if_drt,list_drt,assign_drt,exp>"?string"[ \t]*                     return '?string'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"??"[ \t]*                  return '??'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"?html"[ \t]*               return '?html'
+<interpolation,if_drt,list_drt,assign_drt,exp,array>"?string"[ \t]*             return '?string'
 
 "<#if"                              %{
                                         this.begin('if_drt');
@@ -258,6 +267,29 @@ contents
     | INDENT OBJECT INDENT {
         $$ = new yy.ast.ObjectNode('value', $2);
     }
+    | SEQUENCE
+    | INDENT SEQUENCE {
+        $$ = $2;
+    }
+;
+
+SEQUENCE
+    : '[' ']' {
+        $$ = new yy.ast.ObjectNode('array', []);
+    }
+    | '[' SEQELEMENT ']' {
+        $$ = new yy.ast.ObjectNode('array', $2);
+    }
+;
+
+SEQELEMENT
+    : e {
+        $$ = [$1];
+    }
+    | SEQELEMENT ',' e {
+        $1.push($3);
+        $$ = $1;
+    }
 ;
 
 INTERPOLATIONS
@@ -332,6 +364,11 @@ LISTDIRECTIVE
     DIRECTIVE_LIST_START_TAG INDENT OBJECT INDENT AS INDENT OBJECT INDENT DIRECTIVE_END contents DIRECTIVE_LIST_END_TAG
     {
         $$ = new yy.ast.ListNode($3, $7, $10);
+    }
+    |
+    DIRECTIVE_LIST_START_TAG INDENT SEQUENCE INDENT AS INDENT OBJECT DIRECTIVE_END contents DIRECTIVE_LIST_END_TAG
+    {
+        $$ = new yy.ast.ListNode($3, $7, $9);
     }
     |
     DIRECTIVE_LIST_START_TAG INDENT OBJECT '..' OBJECT INDENT AS INDENT OBJECT DIRECTIVE_END contents DIRECTIVE_LIST_END_TAG

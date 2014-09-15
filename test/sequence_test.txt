@@ -1,0 +1,17 @@
+<#assign y = [['a','b', 'c'] , 2, 3]>
+
+${y}
+${y+1}
+
+
+<#list [ 1, 2 , 3 ] as x>
+    ${x}
+</#list>
+
+
+<#list [[1,3,5], [2, 4, 6]] as z >
+    list:
+    <#list z as a>
+        ${a}
+    </#list>
+</#list>
