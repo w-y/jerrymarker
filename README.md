@@ -57,13 +57,14 @@ And result in
     <h4> by Jane Austen(1775 ~ 1817) </h4>
 
 ## Values & Types
-Jerrymarker now only support 3 literal value types as Number, String and Boolean.
+Jerrymarker now only support 4 value types as Number, String, Boolean and Sequence.
 
     <#assign a = 100 >
     <#assign b = 0.01 >
     <#assign c = 'string' >
     <#assign d = "string" >
     <#assign e = true >
+    <#assign f = [3,2,1, 'go'] >
 
 You can declare a variable via assign directive, the lexical rule is just like javascript(letters or letters plus digits). So you can use v = xx, v1 = xx, but not 1v = xx. Array and Hash types are in schedule now.
 
