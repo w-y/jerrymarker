@@ -20,12 +20,18 @@ module.exports = function(grunt) {
             if (!src) {
                 return false;
             }
+            var lex = src.lex;
+            var yacc = src.yacc;
+
             var dest = f.dest;
 
             if (!dest) {
                 return false;
             }
-            var bnf = file.read(src, 'utf-8');
+
+            var bnfLex = file.read(lex, 'utf-8');
+            var bnfYacc = file.read(yacc, 'utf-8');
+            var bnf = bnfLex + bnfYacc;
             var grammar = ebnfParser.parse(bnf);
 
             var jerrymarker = new jison.Generator(grammar, {});

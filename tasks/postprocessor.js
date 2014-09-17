@@ -10,10 +10,10 @@ module.exports = function(grunt) {
     var config = grunt.config;
     var util = grunt.util;
 
-    grunt.registerTask('preprocessor', 'remove jison cmd code', function() {
+    grunt.registerTask('postprocessor', 'remove jison cmd code', function() {
 
 
-        config.data.preprocessor.files.forEach(function(f) {
+        config.data.postprocessor.files.forEach(function(f) {
 
             var lines;
             var src = f.src.shift();
