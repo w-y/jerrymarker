@@ -1,0 +1,17 @@
+<#assign a={ test : 100 } >
+<#assign b= {'test' : 300 , b : 200, c : { d : -400 } } >
+<#assign h = {"name":"mouse", "price":50}>
+
+${ a[ test ]}
+${ b[ 'test' ] }
+${ b[ c ][d] }
+${ b[c].d }
+${ b[c][d] }
+${ b.c.d }
+
+
+<#assign keys = h?keys >
+
+<#list keys as key>
+    ${key} = ${h[key]}
+</#list>

@@ -1,7 +1,9 @@
 (function() {
-    var util = this.util = {};
+    var util = this.util = this.yy.util = {};
 
     util.travel = travel;
+
+    util.deepObjectExtend = deepObjectExtend;
 
     this.compile = compile;
 
@@ -18,9 +20,34 @@
     function htmlspecialchars_decode(str) {
         return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, '\'');
     }
+    function getKeys(obj) {
+        var r = [];
+        for (var k in obj) {
+            if (!obj.hasOwnProperty(k)) {
+                continue;
+            }
+            r.push(k);
+        }
+        return r;
+    }
     var isArray = nativeIsArray || function(obj) {
         return toString.call(obj) === '[object Array]';
     };
+    var isObject = function(obj) {
+        var type = typeof obj;
+        return type === 'function' || type === 'object' && !!obj;
+    };
+
+    function deepObjectExtend(target, source) {
+        for (var prop in source) {
+            if (prop in target) {
+                deepObjectExtend(target[prop], source[prop]);
+            } else {
+                target[prop] = source[prop];
+            }
+        }
+        return target;
+    }
     /* jshint ignore:start */
     function deepCopy(src, /* INTERNAL */ _visited) {
         if(src == null || typeof(src) !== 'object'){
@@ -80,7 +107,7 @@
         //make sure the returned object has the same prototype as the original
         var proto = (Object.getPrototypeOf ? Object.getPrototypeOf(src): src.__proto__);
         if (!proto) {
-            proto = src.constructor.prototype; //this line would probably only be reached by very old browsers 
+            proto = src.constructor.prototype; //this line would probably only be reached by very old browsers
         }
         var ret = Object.create(proto);
 
@@ -148,8 +175,14 @@
         }
     }
     function travel_object(l, r, c) {
-        var v;
+        var v, v1, v2;
         var i = 0;
+        var temp;
+
+        var func_table = {
+            object: travel_object,
+            expression: travel_expression
+        };
         switch (l.op) {
             case '.':
                 v = travel_object(l.v1, l.v2, c);
@@ -160,11 +193,34 @@
             case 'literalvalue':
                 return l.v1;
             case 'array':
-                var temp = [];
+                temp = [];
                 for (i = 0; i < l.v1.length; ++i) {
-                    temp.push(travel_object(l.v1[i], null, c));
+                    temp.push(func_table[l.v1[i].type](l.v1[i], null, c));
                 }
                 return temp;
+            case 'hash':
+                temp = {};
+                for (var prop in l.v1) {
+                    if (l.v1.hasOwnProperty(prop)) {
+                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, c);
+                    }
+                }
+                return temp;
+            case '[]':
+                v1 = travel_object(l.v1, null, c);
+                v2 = travel_object(l.v2, null, c);
+        
+                if (v2 && v1[v2]) {
+                    return v1[v2];
+                } else {
+                    //v2 = travel_object(l.spare.v1, null, c);
+                    if (l.spare) {
+                        l.spare.op = 'literalvalue';
+                    }
+                    v2 = travel_object(l.spare);
+                    return v1[v2]; 
+                }
+                return;
             default:
                 if (c) {
                     return c[l];
@@ -234,6 +290,8 @@
                         return travel_expression(l.v1, null, context) ? travel_expression(l.v2, null, context) : travel_expression(l.v3, null, context);
                     case 'tohtml':
                         return htmlspecialchars((travel_expression(l.v1, null, context)));
+                    case 'keys':
+                        return getKeys(travel_expression(l.v1, null, context));
                     case '||' :
                         return travel_expression(l.v1, null, context) || travel_expression(l.v2, null, context);
                     case '&&' :

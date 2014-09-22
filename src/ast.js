@@ -12,11 +12,14 @@
 
         this.v3 = v3;
     };
-    ast.ObjectNode = function ObjectNode(op, v1, v2) {
+    ast.ObjectNode = function ObjectNode(op, v1, v2, spare) {
         Node.call(this, 'object');
         this.v1 = v1;
         this.v2 = v2;
         this.op = op;
+        
+        //extra param
+        this.spare = spare;
     };
     ast.IDNode = function IDNode(name) {
         Node.call(this, 'ID');

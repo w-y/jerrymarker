@@ -29,6 +29,12 @@ contents
     | IDENTIFIER {
         $$ = new yy.ast.ObjectNode('value', $1);
     }
+    | OBJECT '[' OBJECT ']' {
+        $$ = new yy.ast.ObjectNode('[]', $1, $3, $3);
+    }
+    | OBJECT '[' STRING ']' {
+        $$ = new yy.ast.ObjectNode('.', $1, $3.slice(1,-1));
+    }
  ;
 
  e
@@ -89,6 +95,9 @@ contents
     | e '?html' {
         $$ = new yy.ast.ExpressionNode('tohtml', $1);
     }
+    | e '?keys' {
+        $$ = new yy.ast.ExpressionNode('keys', $1);
+    }
     | e '?string' '(' e ',' e ')' {
         $$ = new yy.ast.ExpressionNode('trueset', $1, $4, $6);
     }
@@ -148,6 +157,10 @@ contents
     | INDENT SEQUENCE {
         $$ = $2;
     }
+    | HASH
+    | INDENT HASH {
+        $$ = $2
+    }
 ;
 
 SEQUENCE
@@ -166,6 +179,42 @@ SEQELEMENT
     | SEQELEMENT ',' e {
         $1.push($3);
         $$ = $1;
+    }
+;
+
+HASH
+    : OPENBRACE CLOSEBRACE {
+        $$ = new yy.ast.ObjectNode('hash', {});
+    }
+    | OPENBRACE PROPERTYLIST CLOSEBRACE {
+        $$ = new yy.ast.ObjectNode('hash', $2);
+    }
+;
+
+PROPERTYLIST
+    : PROPERTY {
+        $$ = $1; 
+    }
+    | PROPERTYLIST ',' PROPERTY {
+        $$ = yy.util.deepObjectExtend($1, $3)
+    }
+;
+
+PROPERTY
+    : IDENTIFIER ':' e {
+        var d = {};
+        d[$1] = $3;
+        $$ = d;
+    }
+    | STRING ':' e {
+        var d = {};
+        d[$1.slice(1,-1)] = $3;
+        $$ = d;
+    }
+    | NUMBER ':' e {
+        var d = {};
+        d[$1] = $3;
+        $$ = d;
     }
 ;
 
