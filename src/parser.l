@@ -1,7 +1,7 @@
 /* parser lexical grammar */
 %lex
 
-%s if_drt list_drt assign_drt interpolation exp logic_op array hash
+%s if_drt list_drt assign_drt macro_drt interpolation exp logic_op array hash custom_drt_start custom_drt_content
 
 %%
 
@@ -23,7 +23,7 @@
 
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t]*"true"                      return 'TRUE'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t]*"false"                     return 'FALSE'
-<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[a-zA-Z][a-zA-Z_0-9]*        %{
+<interpolation,if_drt,list_drt,macro_drt,assign_drt,exp,array,hash>[a-zA-Z][a-zA-Z_0-9]*        %{
                                                                                         return 'IDENTIFIER';
                                                                                       %}
 <list_drt>".."                                                                        return '..'
@@ -93,7 +93,7 @@
                                     %}
 
 
-<if_drt,list_drt,assign_drt>[ \t]*">"   %{
+<if_drt,list_drt,assign_drt,macro_drt>[ \t]*">"   %{
                                             this.popState();
                                             return 'DIRECTIVE_END';
                                         %}
@@ -110,6 +110,38 @@
                                         this.begin('assign_drt');
                                         return 'DIRECTIVE_ASSIGN_START_TAG';
                                     %}
+
+"<#macro"                           %{
+                                        this.begin('macro_drt');
+                                        return 'DIRECTIVE_MACRO_START_TAG';
+                                    %}
+"</#macro>"                         %{
+                                        return 'DIRECTIVE_MACRO_END_TAG';
+                                    %}
+
+"<@"[a-zA-Z]*                       %{
+                                        yytext = yytext.slice(2);
+                                        this.yy.util.stack.push(yytext);
+                                        this.begin('custom_drt_start');
+                                        return 'CUSTOM_START';
+                                    %}
+<custom_drt_start>">"               %{
+                                        this.popState();
+                                        this.begin('custom_drt_content');
+                                        return 'CUSTOM_START_END';
+                                    %}
+<custom_drt_content>"</@"[a-zA-Z]*">"   %{
+                                        var top = this.yy.util.stack.slice(-1);
+                                        if (top.length > 0) {
+                                            var custom = yytext.slice(3,-1);
+                                            if (top[0] === custom) {
+                                                this.yy.util.stack.pop();
+                                                this.popState();
+                                                return 'CUSTOM_END';
+                                            }
+                                        }
+                                        return 'CHARS';
+                                        %}
 
 <interpolation>[ \t]+               return ''
 <hash>[ \t]+                        return ''

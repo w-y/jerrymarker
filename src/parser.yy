@@ -193,7 +193,7 @@ HASH
 
 PROPERTYLIST
     : PROPERTY {
-        $$ = $1; 
+        $$ = $1;
     }
     | PROPERTYLIST ',' PROPERTY {
         $$ = yy.util.deepObjectExtend($1, $3)
@@ -233,12 +233,17 @@ content
     | CHAR {
         $$ = new yy.ast.LiteralNode($1);
     }
+    | CHARS {
+        $$ = new yy.ast.LiteralNode($1);
+    }
     | INDENT {
         $$ = new yy.ast.LiteralNode($1);
     }
     | IFDIRECTIVE
     | LISTDIRECTIVE
     | ASSIGNDIRECTIVE
+    | MACRODIRECTIVE
+    | CUSTOM
     ;
 
 IFDIRECTIVE
@@ -335,5 +340,20 @@ ASSIGNDIRECTIVE
     {
         var lv = new yy.ast.ObjectNode('value', $3);
         $$ = new yy.ast.StatementNode('assign', lv, $6);
+    }
+;
+
+MACRODIRECTIVE
+    :
+    DIRECTIVE_MACRO_START_TAG INDENT IDENTIFIER DIRECTIVE_END contents DIRECTIVE_MACRO_END_TAG
+    {
+        $$ = new yy.ast.MacroNode($3, $5); 
+    }
+;
+
+CUSTOM
+    :
+    CUSTOM_START CUSTOM_START_END contents CUSTOM_END {
+        $$ = new yy.ast.CustomNode($1, $3);
     }
 ;

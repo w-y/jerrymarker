@@ -17,7 +17,7 @@
         this.v1 = v1;
         this.v2 = v2;
         this.op = op;
-        
+
         //extra param
         this.spare = spare;
     };
@@ -56,5 +56,15 @@
         this.op = op;
         this.lv = lv;
         this.rv = rv;
+    };
+    ast.CustomNode = function CustomNode(key, content) {
+        Node.call(this, 'custom');
+        this.key = key;
+        this.content = content;
+    };
+    ast.MacroNode = function MacroNode(name, content) {
+        Node.call(this, 'macro');
+        this.name = name;
+        this.content = content;
     };
 }).call(jerrymarker);

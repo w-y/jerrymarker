@@ -1,0 +1,7 @@
+<#macro test>
+    hello world!
+</#macro>
+
+<@test>
+   test</@dfdf>i
+</@test>

@@ -3,6 +3,8 @@
 
     util.travel = travel;
 
+    util.stack = [];
+
     util.deepObjectExtend = deepObjectExtend;
 
     this.compile = compile;
@@ -209,16 +211,15 @@
             case '[]':
                 v1 = travel_object(l.v1, null, c);
                 v2 = travel_object(l.v2, null, c);
-        
+
                 if (v2 && v1[v2]) {
                     return v1[v2];
                 } else {
-                    //v2 = travel_object(l.spare.v1, null, c);
                     if (l.spare) {
                         l.spare.op = 'literalvalue';
                     }
                     v2 = travel_object(l.spare);
-                    return v1[v2]; 
+                    return v1[v2];
                 }
                 return;
             default:
@@ -310,17 +311,17 @@
                 return travel_object(l, null, context);
         }
     }
-    function travel_if(root, context, bufferIn, bufferOut) {
+    function travel_if(root, context, envOp) {
         if (root.cond) {
             if (true === travel_expression(root.cond, null, context)) {
-                travel(root.statement, context, bufferIn, bufferOut);
+                travel(root.statement, context, envOp);
             } else {
                 var curr = root;
 
                 while (curr) {
                     var v = travel_expression(curr.cond, null, context);
                     if (v) {
-                        travel(curr.statement, context, bufferIn, bufferOut);
+                        travel(curr.statement, context, envOp);
                         break;
                     }
                     curr = curr.child;
@@ -330,7 +331,46 @@
         }
     }
 
-    function travel_list(node, context, bufferIn, bufferOut) {
+    function _build_local_env() {
+        var localEnv = [];
+        localEnv.buffer = [];
+        var localEnvOp = function(op, param1) {
+            switch(op) {
+                case 'bufferIn':
+                    localEnv.buffer.push(param1);
+                    return;
+                case 'bufferOut':
+                    return localEnv.buffer.join('');
+                default:
+                    break;
+            }
+        };
+        return localEnvOp;
+    }
+    function travel_macro(node, context, envOp) {
+        var localEnvOp = _build_local_env();
+        travel(node.content, context, localEnvOp);
+
+        var content = localEnvOp('bufferOut');
+        envOp('addFunc', node.name, function() {
+            return content;
+        });
+    }
+    function travel_custom(node, context, envOp) {
+        var func = envOp('getFunc', node.key);
+
+        if (func) {
+            var localEnvOp = _build_local_env();
+            travel(node.content, context, localEnvOp);
+
+            var content = localEnvOp('bufferOut');
+            var result = func.call(this, content);
+
+            envOp('bufferIn', result);
+        }
+    }
+
+    function travel_list(node, context, envOp) {
         var i;
         var collection = [];
         if (node.isRange) {
@@ -353,57 +393,82 @@
 
         for (i = 0; i < collection.length; ++i) {
             travel_assign(node.alias, null, context, collection[i]);
-            travel(node.statement, context, bufferIn, bufferOut);
+            travel(node.statement, context, envOp);
         }
     }
-    function travel(node, context, bufferIn, bufferOut) {
+    function travel(node, context, envOp) {
         if (!node) {
             return;
         }
         switch (node.type) {
             case 'content':
                 for(var i = 0; i < node.v.length; ++i) {
-                    travel(node.v[i], context, bufferIn, bufferOut);
+                    travel(node.v[i], context, envOp);
                 }
                 break;
             case 'literal':
-                bufferIn(node.v);
+                envOp('bufferIn', node.v);
                 break;
             case 'object':
-                bufferIn(travel_object(node, null, context));
+                envOp('bufferIn', travel_object(node, null, context));
                 break;
             case 'iterpolation':
-                travel(node.v, context, bufferIn, bufferOut);
+                travel(node.v, context, envOp);
                 break;
             case 'expression':
-                bufferIn(travel_expression(node, null, context));
+                envOp('bufferIn', travel_expression(node, null, context));
                 break;
             case 'if':
-                travel_if(node, context, bufferIn, bufferOut);
+                travel_if(node, context, envOp);
                 break;
             case 'list':
-                travel_list(node, context, bufferIn, bufferOut);
+                travel_list(node, context, envOp);
                 break;
             case 'statement':
                 travel_statement(node, context);
                 break;
+            case 'custom':
+                travel_custom(node, context, envOp);
+                break;
+            case 'macro':
+                travel_macro(node, context, envOp);
+                break;
         }
-        return bufferOut();
+        return envOp('bufferOut');
     }
 
     function compile(input) {
          var root = this.parse(input);
+         var _this = this;
 
          if (root) {
              var f = function(context) {
-                 var buffer = [];
-                 var bufferIn = function(d) {
-                     buffer.push(d);
+                 var env = {};
+
+                 env.buffer = [];
+                 env.func_table = {};
+
+                 var envOp = function(op, param1, param2) {
+                    switch(op) {
+                        case 'bufferIn':
+                            env.buffer.push(param1);
+                            return;
+                        case 'bufferOut':
+                            return env.buffer.join('');
+                        case 'addFunc':
+                            env.func_table[param1] = param2;
+                            return;
+                        case 'getFunc':
+                            return env.func_table[param1];
+                        default:
+                            break;
+                    }
                  };
-                 var bufferOut = function() {
-                     return buffer.join('');
-                 };
-                 return travel(root, context, bufferIn, bufferOut);
+
+                 var result = travel(root, context, envOp);
+
+                 _this.util.stack = [];
+                 return result;
              };
              f.ast = root;
              return f;
