@@ -353,6 +353,10 @@ MACRODIRECTIVE
 
 CUSTOM
     :
+    CUSTOM_START CUSTOM_START_END CUSTOM_END {
+        $$ = new yy.ast.CustomNode($1);
+    }
+    |
     CUSTOM_START CUSTOM_START_END contents CUSTOM_END {
         $$ = new yy.ast.CustomNode($1, $3);
     }

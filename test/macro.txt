@@ -1,7 +1,11 @@
+<#assign x = 101 >
+<#assign y = 'A' >
+
 <#macro test>
-    hello world!
+    <#assign x = 99>
+    hello world! ${x} ${y}
 </#macro>
 
-<@test>
-   test</@dfdf>i
-</@test>
+<@test></@test>
+
+${x}

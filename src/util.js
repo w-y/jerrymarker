@@ -1,7 +1,7 @@
 (function() {
     var util = this.util = this.yy.util = {};
 
-    util.travel = travel;
+    util.traverse = traverse;
 
     util.stack = [];
 
@@ -121,24 +121,38 @@
         return ret;
     }
     /* jshint ignore:end*/
-    function travel_statement(node, context) {
+    function traverse_statement(node, envOp) {
+        console.log(envOp('debug'));
+        var env = envOp('get');
+
+        var context = env.context;
+        console.log(context);
+
         switch(node.op) {
             case 'assign':
                 var v;
                 switch(node.rv.type) {
                     case 'expression':
-                        v = travel_expression(node.rv, null, context);
+                        v = traverse_expression(node.rv, null, context);
                         break;
                     case 'object':
-                        v = travel_object(node.rv, null, context);
+                        v = traverse_object(node.rv, null, context);
                         break;
                 }
-                travel_assign(node.lv, null, context, v);
+                traverse_assign(node.lv, null, context, v);
         }
+        console.log('#############');
+        console.log(envOp('debug'));
+        console.log('#############');
     }
-    function travel_assign(l, r, c, newVal) {
+    function traverse_assign(l, r, c, newVal) {
+        console.log('---------------');
+        console.log(l);
+        console.log(newVal);
+        console.log('---------------');
         var q = [];
-        _travel_assign(l, r, c, newVal, q);
+        _traverse_assign(l, r, c, newVal, q);
+        console.log(q);
 
         _deep_assign(c, q, newVal);
     }
@@ -157,16 +171,16 @@
             obj[keys[0]] = val;
         }
     }
-    function _travel_assign(l, r, c, newVal, q) {
+    function _traverse_assign(l, r, c, newVal, q) {
         var v;
         if (l.op) {
             switch (l.op) {
                 case '.':
-                    _travel_assign(l.v1, l.v2, c, newVal, q);
+                    _traverse_assign(l.v1, l.v2, c, newVal, q);
                     q.push(l.v2);
                     return;
                 case 'value':
-                    _travel_assign(l.v1, l.v2, c, newVal, q);
+                    _traverse_assign(l.v1, l.v2, c, newVal, q);
                     if (l.v2) {
                         q.push(l.v2);
                     }
@@ -176,41 +190,41 @@
             q.push(l);
         }
     }
-    function travel_object(l, r, c) {
+    function traverse_object(l, r, c, envOp) {
         var v, v1, v2;
         var i = 0;
         var temp;
 
         var func_table = {
-            object: travel_object,
-            expression: travel_expression
+            object: traverse_object,
+            expression: traverse_expression
         };
         switch (l.op) {
             case '.':
-                v = travel_object(l.v1, l.v2, c);
+                v = traverse_object(l.v1, l.v2, c, envOp);
                 return v[l.v2];
             case 'value':
-                v = travel_object(l.v1, l.v2, c);
+                v = traverse_object(l.v1, l.v2, c, envOp);
                 return v;
             case 'literalvalue':
                 return l.v1;
             case 'array':
                 temp = [];
                 for (i = 0; i < l.v1.length; ++i) {
-                    temp.push(func_table[l.v1[i].type](l.v1[i], null, c));
+                    temp.push(func_table[l.v1[i].type](l.v1[i], null, c, envOp));
                 }
                 return temp;
             case 'hash':
                 temp = {};
                 for (var prop in l.v1) {
                     if (l.v1.hasOwnProperty(prop)) {
-                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, c);
+                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, c, envOp);
                     }
                 }
                 return temp;
             case '[]':
-                v1 = travel_object(l.v1, null, c);
-                v2 = travel_object(l.v2, null, c);
+                v1 = traverse_object(l.v1, null, c, envOp);
+                v2 = traverse_object(l.v2, null, c, envOp);
 
                 if (v2 && v1[v2]) {
                     return v1[v2];
@@ -218,19 +232,20 @@
                     if (l.spare) {
                         l.spare.op = 'literalvalue';
                     }
-                    v2 = travel_object(l.spare);
+                    v2 = traverse_object(l.spare, null, null, envOp);
                     return v1[v2];
                 }
                 return;
             default:
-                if (c) {
+                return envOp('getKey', l);
+                /*if (c) {
                     return c[l];
                 } else {
                     return undefined;
-                }
+                }*/
         }
     }
-    function travel_expression(l, r, context) {
+    function traverse_expression(l, r, context) {
         var v1 = null;
         var v2 = null;
         var temp = null;
@@ -239,10 +254,10 @@
             case 'expression':
                 switch(l.op) {
                     case '*':
-                        return travel_expression(l.v1, null, context) * travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) * traverse_expression(l.v2, null, context);
                     case '+':
-                        v1 = travel_expression(l.v1, null, context);
-                        v2 = travel_expression(l.v2, null, context);
+                        v1 = traverse_expression(l.v1, null, context);
+                        v2 = traverse_expression(l.v2, null, context);
 
                         if (isArray(v1)) {
                             i = 0;
@@ -253,9 +268,9 @@
                             }
 
                             if (isArray(v2)) {
-                               for (i = 0; i < v2.length; i++) {
-                                   temp.push(deepCopy(v2[i]));
-                               }
+                                for (i = 0; i < v2.length; i++) {
+                                    temp.push(deepCopy(v2[i]));
+                                }
                             } else {
                                 temp.push(deepCopy(v2));
                             }
@@ -263,65 +278,65 @@
                         }
                         return v1 + v2;
                     case '%':
-                        return travel_expression(l.v1, null, context) % travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) % traverse_expression(l.v2, null, context);
                     case '==':
-                        return (travel_expression(l.v1, null, context) == travel_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, context) == traverse_expression(l.v2, null, context));
                     case '!=':
-                        return (travel_expression(l.v1, null, context) != travel_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, context) != traverse_expression(l.v2, null, context));
                     case '-':
-                        return (travel_expression(l.v1, null, context) - travel_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, context) - traverse_expression(l.v2, null, context));
                     case '/':
-                        return (travel_expression(l.v1, null, context) / travel_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, context) / traverse_expression(l.v2, null, context));
                     case 'eval':
-                        return (travel_expression(l.v1, null, context));
+                        return (traverse_expression(l.v1, null, context));
                     case 'uminus':
-                        return -(travel_expression(l.v1, null, context));
+                        return -(traverse_expression(l.v1, null, context));
                     case 'unot':
-                        return !(travel_expression(l.v1, null, context));
+                        return !(traverse_expression(l.v1, null, context));
                     case 'exist':
-                        return existy(travel_expression(l.v1, null, context));
+                        return existy(traverse_expression(l.v1, null, context));
                     case 'existset':
-                        temp = travel_expression(l.v1, null, context);
+                        temp = traverse_expression(l.v1, null, context);
                         if (!existy(temp)) {
-                            var spare = travel_expression(l.v2, null, context);
+                            var spare = traverse_expression(l.v2, null, context);
                             return spare;
                         }
                         return;
                     case 'trueset':
-                        return travel_expression(l.v1, null, context) ? travel_expression(l.v2, null, context) : travel_expression(l.v3, null, context);
+                        return traverse_expression(l.v1, null, context) ? traverse_expression(l.v2, null, context) : traverse_expression(l.v3, null, context);
                     case 'tohtml':
-                        return htmlspecialchars((travel_expression(l.v1, null, context)));
+                        return htmlspecialchars((traverse_expression(l.v1, null, context)));
                     case 'keys':
-                        return getKeys(travel_expression(l.v1, null, context));
+                        return getKeys(traverse_expression(l.v1, null, context));
                     case '||' :
-                        return travel_expression(l.v1, null, context) || travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) || traverse_expression(l.v2, null, context);
                     case '&&' :
-                        return travel_expression(l.v1, null, context) && travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) && traverse_expression(l.v2, null, context);
                     case '>' :
-                        return travel_expression(l.v1, null, context) > travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) > traverse_expression(l.v2, null, context);
                     case '<' :
-                        return travel_expression(l.v1, null, context) < travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) < traverse_expression(l.v2, null, context);
                     case '>=' :
-                        return travel_expression(l.v1, null, context) >= travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) >= traverse_expression(l.v2, null, context);
                     case '<=' :
-                        return travel_expression(l.v1, null, context) <= travel_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, context) <= traverse_expression(l.v2, null, context);
                 }
                 break;
             case 'object':
-                return travel_object(l, null, context);
+                return traverse_object(l, null, context);
         }
     }
-    function travel_if(root, context, envOp) {
+    function traverse_if(root, context, envOp) {
         if (root.cond) {
-            if (true === travel_expression(root.cond, null, context)) {
-                travel(root.statement, context, envOp);
+            if (true === traverse_expression(root.cond, null, context)) {
+                traverse(root.statement, envOp);
             } else {
                 var curr = root;
 
                 while (curr) {
-                    var v = travel_expression(curr.cond, null, context);
+                    var v = traverse_expression(curr.cond, null, context);
                     if (v) {
-                        travel(curr.statement, context, envOp);
+                        traverse(curr.statement, envOp);
                         break;
                     }
                     curr = curr.child;
@@ -332,51 +347,71 @@
     }
 
     function _build_local_env() {
-        var localEnv = [];
-        localEnv.buffer = [];
-        var localEnvOp = function(op, param1) {
-            switch(op) {
-                case 'bufferIn':
-                    localEnv.buffer.push(param1);
-                    return;
-                case 'bufferOut':
-                    return localEnv.buffer.join('');
-                default:
-                    break;
-            }
+        var localEnv = {
+            buffer: [],
+            context: {},
+            func_table: {}
         };
-        return localEnvOp;
+        return localEnv;
     }
-    function travel_macro(node, context, envOp) {
-        var localEnvOp = _build_local_env();
-        travel(node.content, context, localEnvOp);
+    function traverse_macro(node, envOp) {
+        var localEnv = _build_local_env(envOp);
+        var env;
+        var content;
+        var context;
 
-        var content = localEnvOp('bufferOut');
-        envOp('addFunc', node.name, function() {
+        envOp('push', localEnv);
+        env = envOp('get');
+        context = env.context;
+
+        console.log('^^^^^^^^^');
+        console.log(context);
+        console.log('^^^^^^^^^');
+        traverse(node.content, envOp);
+
+        content = envOp('bufferOut');
+
+        envOp('pop', localEnv);
+
+        envOp('addFunc', node.name, function(param) {
             return content;
         });
     }
-    function travel_custom(node, context, envOp) {
+    function traverse_custom(node, envOp) {
         var func = envOp('getFunc', node.key);
+        var localEnv;
+        var content;
+        var result;
+        var env;
+        var context;
 
         if (func) {
-            var localEnvOp = _build_local_env();
-            travel(node.content, context, localEnvOp);
+            localEnv = _build_local_env();
 
-            var content = localEnvOp('bufferOut');
-            var result = func.call(this, content);
+            envOp('push', localEnv);
+
+            env = envOp('get');
+            context = env.context;
+
+            traverse(node.content, envOp);
+
+            content = envOp('bufferOut');
+
+            result = func.call(this, content);
+
+            envOp('pop', localEnv);
 
             envOp('bufferIn', result);
         }
     }
 
-    function travel_list(node, context, envOp) {
+    function traverse_list(node, context, envOp) {
         var i;
         var collection = [];
         if (node.isRange) {
             if (node.collection && 2 === node.collection.length) {
-                var start = parseInt(travel_object(node.collection[0], null, context), 10);
-                var end = parseInt(travel_object(node.collection[1], null, context), 10);
+                var start = parseInt(traverse_object(node.collection[0], null, context), 10);
+                var end = parseInt(traverse_object(node.collection[1], null, context), 10);
                 var step = 1;
 
                 while (start < end) {
@@ -387,92 +422,117 @@
         }
         else {
             if (node.collection) {
-                collection = travel_object(node.collection, null, context);
+                collection = traverse_object(node.collection, null, context);
             }
         }
 
         for (i = 0; i < collection.length; ++i) {
-            travel_assign(node.alias, null, context, collection[i]);
-            travel(node.statement, context, envOp);
+            traverse_assign(node.alias, null, context, collection[i]);
+            traverse(node.statement, envOp);
         }
     }
-    function travel(node, context, envOp) {
+    function traverse(node, envOp) {
+        var env;
         if (!node) {
             return;
         }
+        env = envOp('get');
+        context = env.context;
+
         switch (node.type) {
             case 'content':
                 for(var i = 0; i < node.v.length; ++i) {
-                    travel(node.v[i], context, envOp);
+                    traverse(node.v[i], envOp);
                 }
                 break;
             case 'literal':
                 envOp('bufferIn', node.v);
                 break;
             case 'object':
-                envOp('bufferIn', travel_object(node, null, context));
+                envOp('bufferIn', traverse_object(node, null, context, envOp));
                 break;
             case 'iterpolation':
-                travel(node.v, context, envOp);
+                traverse(node.v, envOp);
                 break;
             case 'expression':
-                envOp('bufferIn', travel_expression(node, null, context));
+                envOp('bufferIn', traverse_expression(node, null, context));
                 break;
             case 'if':
-                travel_if(node, context, envOp);
+                traverse_if(node, context, envOp);
                 break;
             case 'list':
-                travel_list(node, context, envOp);
+                traverse_list(node, context, envOp);
                 break;
             case 'statement':
-                travel_statement(node, context);
+                traverse_statement(node, envOp);
                 break;
             case 'custom':
-                travel_custom(node, context, envOp);
+                traverse_custom(node, envOp);
                 break;
             case 'macro':
-                travel_macro(node, context, envOp);
+                traverse_macro(node, envOp);
                 break;
         }
         return envOp('bufferOut');
     }
 
     function compile(input) {
-         var root = this.parse(input);
-         var _this = this;
+        var root = this.parse(input);
+        var _this = this;
+        var i;
 
-         if (root) {
-             var f = function(context) {
-                 var env = {};
+        if (root) {
+            var f = function(context) {
+                var env = [{
+                    func_table: {},
+                    buffer: [],
+                    context: context
+                }];
 
-                 env.buffer = [];
-                 env.func_table = {};
-
-                 var envOp = function(op, param1, param2) {
+                var envOp = function(op, param1, param2) {
+                    var currEnv = env[env.length-1];
                     switch(op) {
                         case 'bufferIn':
-                            env.buffer.push(param1);
+                            currEnv.buffer.push(param1);
                             return;
                         case 'bufferOut':
-                            return env.buffer.join('');
+                            return currEnv.buffer.join('');
                         case 'addFunc':
-                            env.func_table[param1] = param2;
+                            currEnv.func_table[param1] = param2;
                             return;
                         case 'getFunc':
-                            return env.func_table[param1];
+                            return currEnv.func_table[param1];
+                        case 'get':
+                            return currEnv;
+                        case 'push':
+                            env.push(param1);
+                            return;
+                        case 'pop':
+                            return env.pop();
+                        case 'getKey':
+                            for (var i=env.length-1; i>=0; i--) {
+                                var test = env[i].context[param1];
+                                if (!existy(test)) {
+                                    return test;
+                                }
+                            }
+                            return null;
+                        case 'debug':
+                            console.log(env);
+                            return;
                         default:
                             break;
                     }
-                 };
+                };
 
-                 var result = travel(root, context, envOp);
+                var result = traverse(root, envOp);
 
-                 _this.util.stack = [];
-                 return result;
-             };
-             f.ast = root;
-             return f;
-         }
-         return null;
+                _this.util.stack = [];
+                return result;
+            };
+            f.ast = root;
+            return f;
+        }
+        return null;
     }
 }).call(jerrymarker);
