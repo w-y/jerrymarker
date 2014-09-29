@@ -122,65 +122,59 @@
     }
     /* jshint ignore:end*/
     function traverse_statement(node, envOp) {
-        console.log(envOp('debug'));
         var env = envOp('get');
 
         var context = env.context;
-        console.log(context);
 
         switch(node.op) {
             case 'assign':
                 var v;
                 switch(node.rv.type) {
                     case 'expression':
-                        v = traverse_expression(node.rv, null, context);
+                        v = traverse_expression(node.rv, null, envOp);
                         break;
                     case 'object':
-                        v = traverse_object(node.rv, null, context);
+                        v = traverse_object(node.rv, null, envOp);
                         break;
                 }
-                traverse_assign(node.lv, null, context, v);
+                traverse_assign(node.lv, null, v, envOp);
         }
-        console.log('#############');
-        console.log(envOp('debug'));
-        console.log('#############');
     }
-    function traverse_assign(l, r, c, newVal) {
-        console.log('---------------');
-        console.log(l);
-        console.log(newVal);
-        console.log('---------------');
+    function traverse_assign(l, r, newVal, envOp) {
         var q = [];
-        _traverse_assign(l, r, c, newVal, q);
-        console.log(q);
 
-        _deep_assign(c, q, newVal);
+        _traverse_assign(l, r, newVal, q, envOp);
+
+        _deep_assign(q, newVal, envOp);
     }
-    function _deep_assign(obj, keys, val) {
+    function _deep_assign(keys, val, envOp) {
+        var env = envOp('get');
+        var context = env.context;
+
         if (keys.length > 1) {
             var k = keys.shift();
 
-            if (obj) {
-                obj[k] = val;
+            if (context) {
+                context[k] = val;
             }
-            if(obj[k] === null || typeof obj[k] !== 'object') {
-                obj[k] = {};
+            if(context[k] === null || typeof context[k] !== 'object') {
+                context[k] = {};
             }
-            _deep_assign(obj[k], keys, val);
+            _deep_assign(context[k], keys, val);
         } else {
-            obj[keys[0]] = val;
+            context[keys[0]] = val;
         }
     }
-    function _traverse_assign(l, r, c, newVal, q) {
+    function _traverse_assign(l, r, newVal, q, envOp) {
         var v;
         if (l.op) {
             switch (l.op) {
                 case '.':
-                    _traverse_assign(l.v1, l.v2, c, newVal, q);
+                    _traverse_assign(l.v1, l.v2, newVal, q, envOp);
                     q.push(l.v2);
                     return;
                 case 'value':
-                    _traverse_assign(l.v1, l.v2, c, newVal, q);
+                    _traverse_assign(l.v1, l.v2, newVal, q, envOp);
                     if (l.v2) {
                         q.push(l.v2);
                     }
@@ -190,7 +184,7 @@
             q.push(l);
         }
     }
-    function traverse_object(l, r, c, envOp) {
+    function traverse_object(l, r, envOp) {
         var v, v1, v2;
         var i = 0;
         var temp;
@@ -201,30 +195,30 @@
         };
         switch (l.op) {
             case '.':
-                v = traverse_object(l.v1, l.v2, c, envOp);
+                v = traverse_object(l.v1, l.v2, envOp);
                 return v[l.v2];
             case 'value':
-                v = traverse_object(l.v1, l.v2, c, envOp);
+                v = traverse_object(l.v1, l.v2, envOp);
                 return v;
             case 'literalvalue':
                 return l.v1;
             case 'array':
                 temp = [];
                 for (i = 0; i < l.v1.length; ++i) {
-                    temp.push(func_table[l.v1[i].type](l.v1[i], null, c, envOp));
+                    temp.push(func_table[l.v1[i].type](l.v1[i], null, envOp));
                 }
                 return temp;
             case 'hash':
                 temp = {};
                 for (var prop in l.v1) {
                     if (l.v1.hasOwnProperty(prop)) {
-                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, c, envOp);
+                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, envOp);
                     }
                 }
                 return temp;
             case '[]':
-                v1 = traverse_object(l.v1, null, c, envOp);
-                v2 = traverse_object(l.v2, null, c, envOp);
+                v1 = traverse_object(l.v1, null, envOp);
+                v2 = traverse_object(l.v2, null, envOp);
 
                 if (v2 && v1[v2]) {
                     return v1[v2];
@@ -232,20 +226,15 @@
                     if (l.spare) {
                         l.spare.op = 'literalvalue';
                     }
-                    v2 = traverse_object(l.spare, null, null, envOp);
+                    v2 = traverse_object(l.spare, null, envOp);
                     return v1[v2];
                 }
                 return;
             default:
                 return envOp('getKey', l);
-                /*if (c) {
-                    return c[l];
-                } else {
-                    return undefined;
-                }*/
         }
     }
-    function traverse_expression(l, r, context) {
+    function traverse_expression(l, r, envOp) {
         var v1 = null;
         var v2 = null;
         var temp = null;
@@ -254,10 +243,10 @@
             case 'expression':
                 switch(l.op) {
                     case '*':
-                        return traverse_expression(l.v1, null, context) * traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) * traverse_expression(l.v2, null, envOp);
                     case '+':
-                        v1 = traverse_expression(l.v1, null, context);
-                        v2 = traverse_expression(l.v2, null, context);
+                        v1 = traverse_expression(l.v1, null, envOp);
+                        v2 = traverse_expression(l.v2, null, envOp);
 
                         if (isArray(v1)) {
                             i = 0;
@@ -278,63 +267,63 @@
                         }
                         return v1 + v2;
                     case '%':
-                        return traverse_expression(l.v1, null, context) % traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) % traverse_expression(l.v2, null, envOp);
                     case '==':
-                        return (traverse_expression(l.v1, null, context) == traverse_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, envOp) == traverse_expression(l.v2, null, envOp));
                     case '!=':
-                        return (traverse_expression(l.v1, null, context) != traverse_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, envOp) != traverse_expression(l.v2, null, envOp));
                     case '-':
-                        return (traverse_expression(l.v1, null, context) - traverse_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, envOp) - traverse_expression(l.v2, null, envOp));
                     case '/':
-                        return (traverse_expression(l.v1, null, context) / traverse_expression(l.v2, null, context));
+                        return (traverse_expression(l.v1, null, envOp) / traverse_expression(l.v2, null, envOp));
                     case 'eval':
-                        return (traverse_expression(l.v1, null, context));
+                        return (traverse_expression(l.v1, null, envOp));
                     case 'uminus':
-                        return -(traverse_expression(l.v1, null, context));
+                        return -(traverse_expression(l.v1, null, envOp));
                     case 'unot':
-                        return !(traverse_expression(l.v1, null, context));
+                        return !(traverse_expression(l.v1, null, envOp));
                     case 'exist':
-                        return existy(traverse_expression(l.v1, null, context));
+                        return existy(traverse_expression(l.v1, null, envOp));
                     case 'existset':
-                        temp = traverse_expression(l.v1, null, context);
+                        temp = traverse_expression(l.v1, null, envOp);
                         if (!existy(temp)) {
-                            var spare = traverse_expression(l.v2, null, context);
+                            var spare = traverse_expression(l.v2, null, envOp);
                             return spare;
                         }
                         return;
                     case 'trueset':
-                        return traverse_expression(l.v1, null, context) ? traverse_expression(l.v2, null, context) : traverse_expression(l.v3, null, context);
+                        return traverse_expression(l.v1, null, envOp) ? traverse_expression(l.v2, null, envOp) : traverse_expression(l.v3, null, envOp);
                     case 'tohtml':
-                        return htmlspecialchars((traverse_expression(l.v1, null, context)));
+                        return htmlspecialchars((traverse_expression(l.v1, null, envOp)));
                     case 'keys':
-                        return getKeys(traverse_expression(l.v1, null, context));
+                        return getKeys(traverse_expression(l.v1, null, envOp));
                     case '||' :
-                        return traverse_expression(l.v1, null, context) || traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) || traverse_expression(l.v2, null, envOp);
                     case '&&' :
-                        return traverse_expression(l.v1, null, context) && traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) && traverse_expression(l.v2, null, envOp);
                     case '>' :
-                        return traverse_expression(l.v1, null, context) > traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) > traverse_expression(l.v2, null, envOp);
                     case '<' :
-                        return traverse_expression(l.v1, null, context) < traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) < traverse_expression(l.v2, null, envOp);
                     case '>=' :
-                        return traverse_expression(l.v1, null, context) >= traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) >= traverse_expression(l.v2, null, envOp);
                     case '<=' :
-                        return traverse_expression(l.v1, null, context) <= traverse_expression(l.v2, null, context);
+                        return traverse_expression(l.v1, null, envOp) <= traverse_expression(l.v2, null, envOp);
                 }
                 break;
             case 'object':
-                return traverse_object(l, null, context);
+                return traverse_object(l, null, envOp);
         }
     }
-    function traverse_if(root, context, envOp) {
+    function traverse_if(root, envOp) {
         if (root.cond) {
-            if (true === traverse_expression(root.cond, null, context)) {
+            if (true === traverse_expression(root.cond, null, envOp)) {
                 traverse(root.statement, envOp);
             } else {
                 var curr = root;
 
                 while (curr) {
-                    var v = traverse_expression(curr.cond, null, context);
+                    var v = traverse_expression(curr.cond, null, envOp);
                     if (v) {
                         traverse(curr.statement, envOp);
                         break;
@@ -356,17 +345,10 @@
     }
     function traverse_macro(node, envOp) {
         var localEnv = _build_local_env(envOp);
-        var env;
         var content;
-        var context;
 
         envOp('push', localEnv);
-        env = envOp('get');
-        context = env.context;
 
-        console.log('^^^^^^^^^');
-        console.log(context);
-        console.log('^^^^^^^^^');
         traverse(node.content, envOp);
 
         content = envOp('bufferOut');
@@ -405,13 +387,16 @@
         }
     }
 
-    function traverse_list(node, context, envOp) {
+    function traverse_list(node, envOp) {
         var i;
         var collection = [];
+        var localEnv;
+        var content;
+
         if (node.isRange) {
             if (node.collection && 2 === node.collection.length) {
-                var start = parseInt(traverse_object(node.collection[0], null, context), 10);
-                var end = parseInt(traverse_object(node.collection[1], null, context), 10);
+                var start = parseInt(traverse_object(node.collection[0], null, envOp), 10);
+                var end = parseInt(traverse_object(node.collection[1], null, envOp), 10);
                 var step = 1;
 
                 while (start < end) {
@@ -422,14 +407,21 @@
         }
         else {
             if (node.collection) {
-                collection = traverse_object(node.collection, null, context);
+                collection = traverse_object(node.collection, null, envOp);
             }
         }
 
+        localEnv = _build_local_env(envOp);
+        envOp('push', localEnv);
+
         for (i = 0; i < collection.length; ++i) {
-            traverse_assign(node.alias, null, context, collection[i]);
+            traverse_assign(node.alias, null, collection[i], envOp);
             traverse(node.statement, envOp);
         }
+        content = envOp('bufferOut');
+        envOp('pop');
+
+        envOp('bufferIn', content);
     }
     function traverse(node, envOp) {
         var env;
@@ -449,19 +441,19 @@
                 envOp('bufferIn', node.v);
                 break;
             case 'object':
-                envOp('bufferIn', traverse_object(node, null, context, envOp));
+                envOp('bufferIn', traverse_object(node, null, envOp));
                 break;
             case 'iterpolation':
                 traverse(node.v, envOp);
                 break;
             case 'expression':
-                envOp('bufferIn', traverse_expression(node, null, context));
+                envOp('bufferIn', traverse_expression(node, null, envOp));
                 break;
             case 'if':
-                traverse_if(node, context, envOp);
+                traverse_if(node, envOp);
                 break;
             case 'list':
-                traverse_list(node, context, envOp);
+                traverse_list(node, envOp);
                 break;
             case 'statement':
                 traverse_statement(node, envOp);
@@ -512,11 +504,11 @@
                         case 'getKey':
                             for (var i=env.length-1; i>=0; i--) {
                                 var test = env[i].context[param1];
-                                if (!existy(test)) {
+                                if (existy(test)) {
                                     return test;
                                 }
                             }
-                            return null;
+                            return undefined;
                         case 'debug':
                             console.log(env);
                             return;
