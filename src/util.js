@@ -189,7 +189,7 @@
         var i = 0;
         var temp;
 
-        var func_table = {
+        var action_table = {
             object: traverse_object,
             expression: traverse_expression
         };
@@ -205,14 +205,14 @@
             case 'array':
                 temp = [];
                 for (i = 0; i < l.v1.length; ++i) {
-                    temp.push(func_table[l.v1[i].type](l.v1[i], null, envOp));
+                    temp.push(action_table[l.v1[i].type](l.v1[i], null, envOp));
                 }
                 return temp;
             case 'hash':
                 temp = {};
                 for (var prop in l.v1) {
                     if (l.v1.hasOwnProperty(prop)) {
-                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, envOp);
+                        temp[prop] = action_table[l.v1[prop].type](l.v1[prop], null, envOp);
                     }
                 }
                 return temp;
@@ -425,46 +425,39 @@
     }
     function traverse(node, envOp) {
         var env;
+        var action_table;
+
         if (!node) {
             return;
         }
         env = envOp('get');
-        context = env.context;
 
-        switch (node.type) {
-            case 'content':
+        action_table = {
+            content: function(node, envOp) {
                 for(var i = 0; i < node.v.length; ++i) {
                     traverse(node.v[i], envOp);
                 }
-                break;
-            case 'literal':
+            },
+            literal: function(node, envOp) {
                 envOp('bufferIn', node.v);
-                break;
-            case 'object':
+            },
+            object: function(node, envOp) {
                 envOp('bufferIn', traverse_object(node, null, envOp));
-                break;
-            case 'iterpolation':
+            },
+            iterpolation: function(node, envOp) {
                 traverse(node.v, envOp);
-                break;
-            case 'expression':
+            },
+            expression: function(node, envOp) {
                 envOp('bufferIn', traverse_expression(node, null, envOp));
-                break;
-            case 'if':
-                traverse_if(node, envOp);
-                break;
-            case 'list':
-                traverse_list(node, envOp);
-                break;
-            case 'statement':
-                traverse_statement(node, envOp);
-                break;
-            case 'custom':
-                traverse_custom(node, envOp);
-                break;
-            case 'macro':
-                traverse_macro(node, envOp);
-                break;
-        }
+            },
+            'if': traverse_if,
+            list: traverse_list,
+            statement: traverse_statement,
+            custom: traverse_custom,
+            macro: traverse_macro
+        };
+        action_table[node.type](node, envOp);
+
         return envOp('bufferOut');
     }
 
@@ -472,6 +465,7 @@
         var root = this.parse(input);
         var _this = this;
         var i;
+        var test;
 
         if (root) {
             var f = function(context) {
@@ -483,38 +477,49 @@
 
                 var envOp = function(op, param1, param2) {
                     var currEnv = env[env.length-1];
-                    switch(op) {
-                        case 'bufferIn':
+                    var action_table = {
+                        bufferIn: function(param1) {
                             currEnv.buffer.push(param1);
                             return;
-                        case 'bufferOut':
+                        },
+                        bufferOut: function() {
                             return currEnv.buffer.join('');
-                        case 'addFunc':
+                        },
+                        addFunc: function(param1, param2) {
                             currEnv.func_table[param1] = param2;
                             return;
-                        case 'getFunc':
-                            return currEnv.func_table[param1];
-                        case 'get':
-                            return currEnv;
-                        case 'push':
-                            env.push(param1);
-                            return;
-                        case 'pop':
-                            return env.pop();
-                        case 'getKey':
-                            for (var i=env.length-1; i>=0; i--) {
-                                var test = env[i].context[param1];
+                        },
+                        getFunc: function(param1) {
+                            for (i=env.length-1; i>=0; i--) {
+                                test = env[i].func_table[param1];
                                 if (existy(test)) {
                                     return test;
                                 }
                             }
-                            return undefined;
-                        case 'debug':
+                        },
+                        get: function() {
+                            return currEnv;
+                        },
+                        push: function(param1) {
+                            env.push(param1);
+                        },
+                        pop: function() {
+                            return env.pop();
+                        },
+                        getKey: function(param1) {
+                            for (i=env.length-1; i>=0; i--) {
+                                test = env[i].context[param1];
+                                if (existy(test)) {
+                                    return test;
+                                }
+                            }
+                        },
+                        debug: function() {
                             console.log(env);
                             return;
-                        default:
-                            break;
-                    }
+                        }
+                    };
+                    return action_table[op](param1, param2);
                 };
 
                 var result = traverse(root, envOp);

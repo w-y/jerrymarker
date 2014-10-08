@@ -347,7 +347,7 @@ MACRODIRECTIVE
     :
     DIRECTIVE_MACRO_START_TAG INDENT IDENTIFIER DIRECTIVE_END contents DIRECTIVE_MACRO_END_TAG
     {
-        $$ = new yy.ast.MacroNode($3, $5); 
+        $$ = new yy.ast.MacroNode($3, $5);
     }
 ;
 

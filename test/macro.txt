@@ -1,9 +1,15 @@
 <#assign x = 101 >
 <#assign y = 'A' >
 
+<#macro hello>
+    <#assign x = 98>
+    hello world! ${x} ${y}
+</#macro>
+
 <#macro test>
     <#assign x = 99>
     hello world! ${x} ${y}
+    <@hello></@hello>
 </#macro>
 
 <@test></@test>

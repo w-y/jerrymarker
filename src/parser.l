@@ -21,8 +21,8 @@
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[0-9]+("."[0-9]+)?\b              return 'NUMBER'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>\"[^"\n]*["\n]|\'[^'\n]*['\n]     return 'STRING'
 
-<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t]*"true"                      return 'TRUE'
-<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t]*"false"                     return 'FALSE'
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"true"                      return 'TRUE'
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"false"                     return 'FALSE'
 <interpolation,if_drt,list_drt,macro_drt,assign_drt,exp,array,hash>[a-zA-Z][a-zA-Z_0-9]*        %{
                                                                                         return 'IDENTIFIER';
                                                                                       %}
@@ -37,7 +37,7 @@
                                                                                         this.begin('array');
                                                                                         return '[';
                                                                                       %}
-<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"]"                    %{
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"]"                    %{
                                                                                     this.popState();
                                                                                     return ']';
                                                                                 %}
@@ -146,7 +146,7 @@
 <interpolation>[ \t]+               return ''
 <hash>[ \t]+                        return ''
 <array>[ \t]+                       return ''
-[ \t]+                              return 'INDENT'
+[ \t\n]+                            return 'INDENT'
 (.|\n)                              return 'CHAR'
 <<EOF>>								return 'EOF'
 /lex

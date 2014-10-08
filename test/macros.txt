@@ -1,0 +1,30 @@
+<#macro CommentList>
+    <#assign data= [
+        {author: "Pete Hunt", text: "This is one comment"}, 
+        {author: "Jordan Walke", text: "This is *another* comment"}
+        ] >
+    <ul>
+    <#list data as d >
+        <li>
+            <span>${d.author}</span>
+            <span>${d.text}</span>
+        </li> 
+    </#list>
+    </ul>
+</#macro>
+
+<#macro CommentForm>
+    <form>
+        <textarea name="content" ></textarea>
+        <input type="submit" value="提交" />
+    </form>
+</#macro>
+
+<#macro Comment>
+    <div class="container">
+        <@CommentList></@CommentList>
+        <@CommentForm></@CommentForm>
+    </div>
+</#macro>
+
+<@Comment></@Comment>

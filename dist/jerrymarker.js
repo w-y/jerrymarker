@@ -384,7 +384,7 @@ case 85:
 break;
 case 86:
 
-        this.$ = new yy.ast.MacroNode($$[$0-3], $$[$0-1]); 
+        this.$ = new yy.ast.MacroNode($$[$0-3], $$[$0-1]);
     
 break;
 case 87:
@@ -1064,7 +1064,7 @@ case 55:return 5
 break;
 }
 },
-rules: [/^(?:\$\{)/,/^(?:\})/,/^(?:\})/,/^(?:as\b)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:"[^"\n]*["\n]|'[^'\n]*['\n])/,/^(?:[ \t]*true\b)/,/^(?:[ \t]*false\b)/,/^(?:[a-zA-Z][a-zA-Z_0-9]*)/,/^(?:\.\.)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:-)/,/^(?:\+)/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\|\|)/,/^(?:&&)/,/^(?:<=)/,/^(?:>=)/,/^(?:<)/,/^(?:[ \t]*\()/,/^(?:>)/,/^(?:[ \t]*,)/,/^(?::)/,/^(?:\)[ \t]*)/,/^(?:\.)/,/^(?:==)/,/^(?:!=)/,/^(?:=)/,/^(?:[ \t]*!)/,/^(?:\?\?[ \t]*)/,/^(?:\?html[ \t]*)/,/^(?:\?string[ \t]*)/,/^(?:\?keys[ \t]*)/,/^(?:<#if\b)/,/^(?:<\/#if>)/,/^(?:<#list\b)/,/^(?:<\/#list>)/,/^(?:[ \t]*>)/,/^(?:<#elseif\b)/,/^(?:<#else\b)/,/^(?:<#assign\b)/,/^(?:<#macro\b)/,/^(?:<\/#macro>)/,/^(?:<@[a-zA-Z]*)/,/^(?:>)/,/^(?:<\/@[a-zA-Z]*>)/,/^(?:[ \t]+)/,/^(?:[ \t]+)/,/^(?:[ \t]+)/,/^(?:[ \t]+)/,/^(?:(.|\n))/,/^(?:$)/],
+rules: [/^(?:\$\{)/,/^(?:\})/,/^(?:\})/,/^(?:as\b)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:"[^"\n]*["\n]|'[^'\n]*['\n])/,/^(?:[ \t\n]*true\b)/,/^(?:[ \t\n]*false\b)/,/^(?:[a-zA-Z][a-zA-Z_0-9]*)/,/^(?:\.\.)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:-)/,/^(?:\+)/,/^(?:\[)/,/^(?:[ \t\n]*\])/,/^(?:\{)/,/^(?:\|\|)/,/^(?:&&)/,/^(?:<=)/,/^(?:>=)/,/^(?:<)/,/^(?:[ \t]*\()/,/^(?:>)/,/^(?:[ \t]*,)/,/^(?::)/,/^(?:\)[ \t]*)/,/^(?:\.)/,/^(?:==)/,/^(?:!=)/,/^(?:=)/,/^(?:[ \t]*!)/,/^(?:\?\?[ \t]*)/,/^(?:\?html[ \t]*)/,/^(?:\?string[ \t]*)/,/^(?:\?keys[ \t]*)/,/^(?:<#if\b)/,/^(?:<\/#if>)/,/^(?:<#list\b)/,/^(?:<\/#list>)/,/^(?:[ \t]*>)/,/^(?:<#elseif\b)/,/^(?:<#else\b)/,/^(?:<#assign\b)/,/^(?:<#macro\b)/,/^(?:<\/#macro>)/,/^(?:<@[a-zA-Z]*)/,/^(?:>)/,/^(?:<\/@[a-zA-Z]*>)/,/^(?:[ \t]+)/,/^(?:[ \t]+)/,/^(?:[ \t]+)/,/^(?:[ \t\n]+)/,/^(?:(.|\n))/,/^(?:$)/],
 conditions: {"if_drt":{"rules":[0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,27,28,29,30,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,53,54,55],"inclusive":true},"list_drt":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,27,28,29,30,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,53,54,55],"inclusive":true},"assign_drt":{"rules":[0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,53,54,55],"inclusive":true},"macro_drt":{"rules":[0,2,3,8,37,38,39,40,41,42,43,44,45,46,47,53,54,55],"inclusive":true},"interpolation":{"rules":[0,2,3,4,5,6,7,8,10,11,12,13,14,15,16,18,19,20,21,22,23,27,28,29,30,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,50,53,54,55],"inclusive":true},"exp":{"rules":[0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,29,30,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,53,54,55],"inclusive":true},"logic_op":{"rules":[0,2,3,37,38,39,40,42,43,44,45,46,47,53,54,55],"inclusive":true},"array":{"rules":[0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,27,28,29,30,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,52,53,54,55],"inclusive":true},"hash":{"rules":[0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,51,53,54,55],"inclusive":true},"custom_drt_start":{"rules":[0,2,3,37,38,39,40,42,43,44,45,46,47,48,53,54,55],"inclusive":true},"custom_drt_content":{"rules":[0,2,3,37,38,39,40,42,43,44,45,46,47,49,53,54,55],"inclusive":true},"INITIAL":{"rules":[0,2,3,37,38,39,40,42,43,44,45,46,47,53,54,55],"inclusive":true}}
 });
 return lexer;
@@ -1268,7 +1268,7 @@ return new Parser;
         var i = 0;
         var temp;
 
-        var func_table = {
+        var action_table = {
             object: traverse_object,
             expression: traverse_expression
         };
@@ -1284,14 +1284,14 @@ return new Parser;
             case 'array':
                 temp = [];
                 for (i = 0; i < l.v1.length; ++i) {
-                    temp.push(func_table[l.v1[i].type](l.v1[i], null, envOp));
+                    temp.push(action_table[l.v1[i].type](l.v1[i], null, envOp));
                 }
                 return temp;
             case 'hash':
                 temp = {};
                 for (var prop in l.v1) {
                     if (l.v1.hasOwnProperty(prop)) {
-                        temp[prop] = func_table[l.v1[prop].type](l.v1[prop], null, envOp);
+                        temp[prop] = action_table[l.v1[prop].type](l.v1[prop], null, envOp);
                     }
                 }
                 return temp;
@@ -1504,46 +1504,39 @@ return new Parser;
     }
     function traverse(node, envOp) {
         var env;
+        var action_table;
+
         if (!node) {
             return;
         }
         env = envOp('get');
-        context = env.context;
 
-        switch (node.type) {
-            case 'content':
+        action_table = {
+            content: function(node, envOp) {
                 for(var i = 0; i < node.v.length; ++i) {
                     traverse(node.v[i], envOp);
                 }
-                break;
-            case 'literal':
+            },
+            literal: function(node, envOp) {
                 envOp('bufferIn', node.v);
-                break;
-            case 'object':
+            },
+            object: function(node, envOp) {
                 envOp('bufferIn', traverse_object(node, null, envOp));
-                break;
-            case 'iterpolation':
+            },
+            iterpolation: function(node, envOp) {
                 traverse(node.v, envOp);
-                break;
-            case 'expression':
+            },
+            expression: function(node, envOp) {
                 envOp('bufferIn', traverse_expression(node, null, envOp));
-                break;
-            case 'if':
-                traverse_if(node, envOp);
-                break;
-            case 'list':
-                traverse_list(node, envOp);
-                break;
-            case 'statement':
-                traverse_statement(node, envOp);
-                break;
-            case 'custom':
-                traverse_custom(node, envOp);
-                break;
-            case 'macro':
-                traverse_macro(node, envOp);
-                break;
-        }
+            },
+            'if': traverse_if,
+            list: traverse_list,
+            statement: traverse_statement,
+            custom: traverse_custom,
+            macro: traverse_macro
+        };
+        action_table[node.type](node, envOp);
+
         return envOp('bufferOut');
     }
 
@@ -1551,6 +1544,7 @@ return new Parser;
         var root = this.parse(input);
         var _this = this;
         var i;
+        var test;
 
         if (root) {
             var f = function(context) {
@@ -1562,38 +1556,49 @@ return new Parser;
 
                 var envOp = function(op, param1, param2) {
                     var currEnv = env[env.length-1];
-                    switch(op) {
-                        case 'bufferIn':
+                    var action_table = {
+                        bufferIn: function(param1) {
                             currEnv.buffer.push(param1);
                             return;
-                        case 'bufferOut':
+                        },
+                        bufferOut: function() {
                             return currEnv.buffer.join('');
-                        case 'addFunc':
+                        },
+                        addFunc: function(param1, param2) {
                             currEnv.func_table[param1] = param2;
                             return;
-                        case 'getFunc':
-                            return currEnv.func_table[param1];
-                        case 'get':
-                            return currEnv;
-                        case 'push':
-                            env.push(param1);
-                            return;
-                        case 'pop':
-                            return env.pop();
-                        case 'getKey':
-                            for (var i=env.length-1; i>=0; i--) {
-                                var test = env[i].context[param1];
+                        },
+                        getFunc: function(param1) {
+                            for (i=env.length-1; i>=0; i--) {
+                                test = env[i].func_table[param1];
                                 if (existy(test)) {
                                     return test;
                                 }
                             }
-                            return undefined;
-                        case 'debug':
+                        },
+                        get: function() {
+                            return currEnv;
+                        },
+                        push: function(param1) {
+                            env.push(param1);
+                        },
+                        pop: function() {
+                            return env.pop();
+                        },
+                        getKey: function(param1) {
+                            for (i=env.length-1; i>=0; i--) {
+                                test = env[i].context[param1];
+                                if (existy(test)) {
+                                    return test;
+                                }
+                            }
+                        },
+                        debug: function() {
                             console.log(env);
                             return;
-                        default:
-                            break;
-                    }
+                        }
+                    };
+                    return action_table[op](param1, param2);
                 };
 
                 var result = traverse(root, envOp);
