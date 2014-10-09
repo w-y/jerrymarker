@@ -23,7 +23,7 @@
 
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"true"                      return 'TRUE'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"false"                     return 'FALSE'
-<interpolation,if_drt,list_drt,macro_drt,assign_drt,exp,array,hash>[a-zA-Z][a-zA-Z_0-9]*        %{
+<interpolation,if_drt,list_drt,macro_drt,assign_drt,exp,array,hash,custom_drt_start>[a-zA-Z][a-zA-Z_0-9]*        %{
                                                                                         return 'IDENTIFIER';
                                                                                       %}
 <list_drt>".."                                                                        return '..'
@@ -61,6 +61,8 @@
 <exp>">"                                                                        return '>'
 <exp,assign_drt,array,hash>[ \t]*","                                                             return ','
 <hash>":"                                                                       return ':'
+<custom_drt_start>"="                                                           return 'SETVALUE'
+<custom_drt_start>[ \t]+                                                        return 'SEP'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>")"[ \t]*              %{
                                                                                     this.popState();
                                                                                     return ')';

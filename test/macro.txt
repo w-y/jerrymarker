@@ -3,12 +3,14 @@
 
 <#macro hello>
     <#assign x = 98>
-    hello world! ${x} ${y}
+    hello world! ${x} ${y} ${z}
 </#macro>
 
 <#macro test>
     <#assign x = 99>
-    hello world! ${x} ${y}
+    <#assign z = 'zz' >
+    
+    hello world! ${x} ${y} ${z}
     <@hello></@hello>
 </#macro>
 

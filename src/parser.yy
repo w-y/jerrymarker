@@ -196,7 +196,7 @@ PROPERTYLIST
         $$ = $1;
     }
     | PROPERTYLIST ',' PROPERTY {
-        $$ = yy.util.deepObjectExtend($1, $3)
+        $$ = yy.util.deepObjectExtend($1, $3);
     }
 ;
 
@@ -212,6 +212,33 @@ PROPERTY
         $$ = d;
     }
     | NUMBER ':' e {
+        var d = {};
+        d[$1] = $3;
+        $$ = d;
+    }
+;
+
+CUSTOMPROPERTYLIST
+    : CUSTOMPROPERTY {
+        $$ = $1;
+    }
+    | CUSTOMPROPERTYLIST SEP CUSTOMPROPERTY {
+        $$ = yy.util.deepObjectExtend($1, $3);
+    }
+;
+
+CUSTOMPROPERTY
+    : IDENTIFIER 'SETVALUE' e {
+        var d = {};
+        d[$1] = $3;
+        $$ = d;
+    }
+    | STRING 'SETVALUE' e {
+        var d = {};
+        d[$1.slice(1,-1)] = $3;
+        $$ = d;
+    }
+    | NUMBER 'SETVALUE' e {
         var d = {};
         d[$1] = $3;
         $$ = d;
@@ -354,10 +381,14 @@ MACRODIRECTIVE
 CUSTOM
     :
     CUSTOM_START CUSTOM_START_END CUSTOM_END {
-        $$ = new yy.ast.CustomNode($1);
+        $$ = new yy.ast.CustomNode($1, {});
+    }
+    |
+    CUSTOM_START SEP CUSTOMPROPERTYLIST CUSTOM_START_END CUSTOM_END {
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', $3));
     }
     |
     CUSTOM_START CUSTOM_START_END contents CUSTOM_END {
-        $$ = new yy.ast.CustomNode($1, $3);
+        $$ = new yy.ast.CustomNode($1, {}, $3);
     }
 ;

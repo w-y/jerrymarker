@@ -196,7 +196,10 @@
         switch (l.op) {
             case '.':
                 v = traverse_object(l.v1, l.v2, envOp);
-                return v[l.v2];
+                if (v) {
+                    return v[l.v2];
+                }
+                return undefined;
             case 'value':
                 v = traverse_object(l.v1, l.v2, envOp);
                 return v;
@@ -344,16 +347,9 @@
         return localEnv;
     }
     function traverse_macro(node, envOp) {
-        var localEnv = _build_local_env(envOp);
         var content;
 
-        envOp('push', localEnv);
-
-        traverse(node.content, envOp);
-
-        content = envOp('bufferOut');
-
-        envOp('pop', localEnv);
+        content = node.content;
 
         envOp('addFunc', node.name, function(param) {
             return content;
@@ -366,13 +362,31 @@
         var result;
         var env;
         var context;
+        var props;
+        var propsParent;
+
+        props = traverse_object(node.prop, null, envOp);
+
+        propsParent = envOp('getKeyThis', 'props');
+
+        if (!props) {
+            props = {};
+        }
+        if (!propsParent) {
+            propsParent = {};
+        }
 
         if (func) {
             localEnv = _build_local_env();
 
             envOp('push', localEnv);
 
+            envOp('setKey', 'this', {
+                props:deepObjectExtend(props, propsParent)
+            });
+
             env = envOp('get');
+
             context = env.context;
 
             traverse(node.content, envOp);
@@ -380,6 +394,8 @@
             content = envOp('bufferOut');
 
             result = func.call(this, content);
+
+            result = traverse(result, envOp);
 
             envOp('pop', localEnv);
 
@@ -414,9 +430,11 @@
         localEnv = _build_local_env(envOp);
         envOp('push', localEnv);
 
-        for (i = 0; i < collection.length; ++i) {
-            traverse_assign(node.alias, null, collection[i], envOp);
-            traverse(node.statement, envOp);
+        if (collection) {
+            for (i = 0; i < collection.length; ++i) {
+                traverse_assign(node.alias, null, collection[i], envOp);
+                traverse(node.statement, envOp);
+            }
         }
         content = envOp('bufferOut');
         envOp('pop');
@@ -469,6 +487,7 @@
 
         if (root) {
             var f = function(context) {
+                f.context = context;
                 var env = [{
                     func_table: {},
                     buffer: [],
@@ -506,11 +525,22 @@
                         pop: function() {
                             return env.pop();
                         },
+                        setKey: function(param1, param2) {
+                            currEnv.context[param1] = param2;
+                        },
                         getKey: function(param1) {
                             for (i=env.length-1; i>=0; i--) {
                                 test = env[i].context[param1];
                                 if (existy(test)) {
                                     return test;
+                                }
+                            }
+                        },
+                        getKeyThis: function(param1) {
+                            for (i=env.length-1; i>=0; i--) {
+                                test = env[i].context.this;
+                                if (existy(test)) {
+                                    return test[param1];
                                 }
                             }
                         },

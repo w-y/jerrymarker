@@ -57,10 +57,11 @@
         this.lv = lv;
         this.rv = rv;
     };
-    ast.CustomNode = function CustomNode(key, content) {
+    ast.CustomNode = function CustomNode(key, prop, content) {
         Node.call(this, 'custom');
         this.key = key;
         this.content = content;
+        this.prop = prop;
     };
     ast.MacroNode = function MacroNode(name, content) {
         Node.call(this, 'macro');
