@@ -347,12 +347,8 @@
         return localEnv;
     }
     function traverse_macro(node, envOp) {
-        var content;
-
-        content = node.content;
-
         envOp('addFunc', node.name, function(param) {
-            return content;
+            return node;
         });
     }
     function traverse_custom(node, envOp) {
@@ -360,6 +356,7 @@
         var localEnv;
         var content;
         var result;
+        var macroNode;
         var env;
         var context;
         var props;
@@ -385,17 +382,35 @@
                 props:deepObjectExtend(props, propsParent)
             });
 
-            env = envOp('get');
+            if (props && props.watch) {
 
-            context = env.context;
+                envOp('watch', props.watch, 'comment-list', function(newData) {
+                    var result;
+
+                    localEnv = _build_local_env();
+
+                    envOp('push', localEnv);
+                    envOp('setKey', 'this', {
+                        props:newData
+                    });
+
+                    result = traverse(macroNode.content, envOp);
+
+                    envOp('pop', localEnv);
+
+                    return result;
+                });
+            }
+
+            env = envOp('get');
 
             traverse(node.content, envOp);
 
             content = envOp('bufferOut');
 
-            result = func.call(this, content);
+            macroNode = func.call(this, content);
 
-            result = traverse(result, envOp);
+            result = traverse(macroNode.content, envOp);
 
             envOp('pop', localEnv);
 
@@ -488,15 +503,43 @@
         if (root) {
             var f = function(context) {
                 f.context = context;
+                f.watches = [];
+
+                f.watch = function(key, id, func) {
+                    f.watches.push({
+                        id: id,
+                        key: key,
+                        func: func
+                    });
+                };
+                f.set = function(data, key, callback) {
+                    var i;
+                    var result = [];
+
+                    for (i = 0; i < f.watches.length; i++) {
+
+                        if (f.watches[i].key === key) { 
+                            result.push({
+                                id: f.watches[i].id,
+                                data: f.watches[i].func.call(null, data)
+                            });
+                        }
+                    }
+
+                    callback.call(null, result);
+                };
                 var env = [{
                     func_table: {},
                     buffer: [],
                     context: context
                 }];
 
-                var envOp = function(op, param1, param2) {
+                var envOp = function(op, param1, param2, param3) {
                     var currEnv = env[env.length-1];
                     var action_table = {
+                        watch: function(param1, param2, param3) {
+                            f.watch(param1, param2, param3);
+                        },
                         bufferIn: function(param1) {
                             currEnv.buffer.push(param1);
                             return;
@@ -549,7 +592,7 @@
                             return;
                         }
                     };
-                    return action_table[op](param1, param2);
+                    return action_table[op](param1, param2, param3);
                 };
 
                 var result = traverse(root, envOp);

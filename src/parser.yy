@@ -388,7 +388,27 @@ CUSTOM
         $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', $3));
     }
     |
+    CUSTOM_START SEP CUSTOMPROPERTYLIST SEP CUSTOM_START_END CUSTOM_END {
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', $3));
+    }
+    |
     CUSTOM_START CUSTOM_START_END contents CUSTOM_END {
-        $$ = new yy.ast.CustomNode($1, {}, $3);
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', {}), $3);
+    }
+    |
+    CUSTOM_START CUSTOM_SELFCLOSING {
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', {}));
+    }
+    |
+    CUSTOM_START SEP CUSTOM_SELFCLOSING {
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', {}));
+    }
+    |
+    CUSTOM_START SEP CUSTOMPROPERTYLIST CUSTOM_SELFCLOSING {
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', $3));
+    }
+    |
+    CUSTOM_START SEP CUSTOMPROPERTYLIST SEP CUSTOM_SELFCLOSING {
+        $$ = new yy.ast.CustomNode($1, new yy.ast.ObjectNode('hash', $3));
     }
 ;

@@ -19,7 +19,7 @@
                                     %}
 "as"                                return 'AS'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[0-9]+("."[0-9]+)?\b              return 'NUMBER'
-<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>\"[^"\n]*["\n]|\'[^'\n]*['\n]     return 'STRING'
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash,custom_drt_start>\"[^"\n]*["\n]|\'[^'\n]*['\n]     return 'STRING'
 
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"true"                      return 'TRUE'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"false"                     return 'FALSE'
@@ -59,10 +59,10 @@
                                                                                     return '(';
                                                                                 %}
 <exp>">"                                                                        return '>'
-<exp,assign_drt,array,hash>[ \t]*","                                                             return ','
+<exp,assign_drt,array,hash>[ \t]*","                                            return ','
 <hash>":"                                                                       return ':'
 <custom_drt_start>"="                                                           return 'SETVALUE'
-<custom_drt_start>[ \t]+                                                        return 'SEP'
+<custom_drt_start>[ \t\n]+                                                        return 'SEP'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>")"[ \t]*              %{
                                                                                     this.popState();
                                                                                     return ')';
@@ -127,7 +127,7 @@
                                         this.begin('custom_drt_start');
                                         return 'CUSTOM_START';
                                     %}
-<custom_drt_start>">"               %{
+<custom_drt_start>[ \t\n]*">"               %{
                                         this.popState();
                                         this.begin('custom_drt_content');
                                         return 'CUSTOM_START_END';
@@ -144,6 +144,10 @@
                                         }
                                         return 'CHARS';
                                         %}
+<custom_drt_start>[ \t\n]*"/>"      %{
+                                        this.popState();
+                                        return 'CUSTOM_SELFCLOSING';
+                                    %}
 
 <interpolation>[ \t]+               return ''
 <hash>[ \t]+                        return ''

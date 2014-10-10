@@ -3,17 +3,25 @@
 
 <#macro hello>
     <#assign x = 98>
-    hello world! ${x} ${y} ${z}
+    hello world! ${x} ${y} ${z} ${this.props.test}
 </#macro>
 
 <#macro test>
     <#assign x = 99>
     <#assign z = 'zz' >
     
-    hello world! ${x} ${y} ${z}
+    hello world! ${this.props.data} ${x} ${y} ${z}
     <@hello></@hello>
 </#macro>
 
-<@test></@test>
-
+<@test data="oh!" ></@test>
 ${x}
+-------------------------
+<@hello/>
+-------------------------
+<@hello/>
+-------------------------
+<@hello test="test"/>
+-------------------------
+<@hello test="test" />
+-------------------------

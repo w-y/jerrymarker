@@ -24,7 +24,7 @@
 
 <#macro Comment>
     <div class="container">
-        <@CommentList></@CommentList>
+        <@CommentList watch="data" ></@CommentList>
         <@CommentForm></@CommentForm>
     </div>
 </#macro>
