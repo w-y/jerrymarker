@@ -1146,7 +1146,7 @@ return new Parser;
         return r;
     }
     var isArray = nativeIsArray || function(obj) {
-        return toString.call(obj) === '[object Array]';
+        return Object.prototype.toString.call(obj) === '[object Array]';
     };
     var isObject = function(obj) {
         var type = typeof obj;
