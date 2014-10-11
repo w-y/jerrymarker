@@ -518,7 +518,7 @@
 
                     for (i = 0; i < f.watches.length; i++) {
 
-                        if (f.watches[i].key === key) { 
+                        if (f.watches[i].key === key) {
                             result.push({
                                 id: f.watches[i].id,
                                 data: f.watches[i].func.call(null, data)
