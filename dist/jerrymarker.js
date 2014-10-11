@@ -1801,15 +1801,6 @@ return new Parser;
         var template = exports.compile(source);
         var context = {};
         console.log(template(context));
-
-        template.set({
-            data: [{
-                author: 'w-y',
-                text: 'zzz'
-            }]
-        }, 'data', function(data) {
-            console.log(data);
-        });
     };
     if (typeof module !== 'undefined' && require.main === module) {
         exports.main(process.argv.slice(1));
