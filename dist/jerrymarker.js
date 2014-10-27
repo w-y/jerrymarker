@@ -1497,7 +1497,7 @@ return new Parser;
 
             if (props && props.watch) {
 
-                envOp('watch', props.watch, 'comment-list', function(newData) {
+                envOp('watch', props.watch, function(newData) {
                     var result;
 
                     localEnv = _build_local_env();
@@ -1606,7 +1606,6 @@ return new Parser;
 
         return envOp('bufferOut');
     }
-
     function compile(input) {
         var root = this.parse(input);
         var _this = this;
@@ -1615,43 +1614,40 @@ return new Parser;
 
         if (root) {
             var f = function(context) {
-                f.context = context;
-                f.watches = [];
-
-                f.watch = function(key, id, func) {
-                    f.watches.push({
-                        id: id,
-                        key: key,
-                        func: func
-                    });
-                };
                 f.set = function(data, key, callback) {
                     var i;
                     var result = [];
+                    if (!f.watches) {
+                        f.watches = [];
+                    }
 
                     for (i = 0; i < f.watches.length; i++) {
 
-                        if (f.watches[i].key === key) { 
+                        if (f.watches[i].key === key) {
                             result.push({
-                                id: f.watches[i].id,
                                 data: f.watches[i].func.call(null, data)
                             });
                         }
                     }
-
                     callback.call(null, result);
                 };
                 var env = [{
                     func_table: {},
-                    buffer: [],
-                    context: context
+                        buffer: [],
+                        context: context
                 }];
 
-                var envOp = function(op, param1, param2, param3) {
+                var envOp = function(op, param1, param2) {
                     var currEnv = env[env.length-1];
                     var action_table = {
-                        watch: function(param1, param2, param3) {
-                            f.watch(param1, param2, param3);
+                        watch: function(param1, param2) {
+                            if (!f.watches) {
+                                f.watches = [];
+                            }
+                            f.watches.push({
+                                key: param1,
+                            func: param2
+                            });
                         },
                         bufferIn: function(param1) {
                             currEnv.buffer.push(param1);
@@ -1705,15 +1701,18 @@ return new Parser;
                             return;
                         }
                     };
-                    return action_table[op](param1, param2, param3);
+                    return action_table[op](param1, param2);
                 };
 
                 var result = traverse(root, envOp);
 
                 _this.util.stack = [];
+
                 return result;
             };
+
             f.ast = root;
+
             return f;
         }
         return null;
