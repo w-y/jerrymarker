@@ -1,0 +1,27 @@
+<#assign x = 101 >
+<#assign y = 'A' >
+
+<#macro hello>
+    <#assign x = 98>
+    hello world! ${x} ${y} ${z} ${this.props.test}
+</#macro>
+
+<#macro test>
+    <#assign x = 99>
+    <#assign z = 'zz' >
+    
+    hello world! ${this.props.data} ${x} ${y} ${z}
+    <@hello></@hello>
+</#macro>
+
+<@test data="oh!" ></@test>
+${x}
+-------------------------
+<@hello/>
+-------------------------
+<@hello/>
+-------------------------
+<@hello test="test"/>
+-------------------------
+<@hello test="test" />
+-------------------------

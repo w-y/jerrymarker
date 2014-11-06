@@ -1,0 +1,7 @@
+<#assign x = 100>
+
+<#list 1..10 as x >
+    inner x is: ${x}
+</#list>
+
+outer x is: ${x}

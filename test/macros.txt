@@ -1,0 +1,32 @@
+<#assign data= [
+    {author: "Pete Hunt", text: "This is one comment"},
+    {author: "Jordan Walke", text: "This is *another* comment"}
+    ] >
+
+
+<#macro CommentList>
+    <ul>
+    <#list this.props.data as d >
+        <li>
+            <span>${d.author}</span>
+            <span>${d.text}</span>
+        </li>
+    </#list>
+    </ul>
+</#macro>
+
+<#macro CommentForm>
+    <form>
+        <textarea name="content" ></textarea>
+        <input type="submit" value="提交${x}" />
+    </form>
+</#macro>
+
+<#macro Comment>
+    <div class="container">
+        <@CommentList watch="data" ></@CommentList>
+        <@CommentForm></@CommentForm>
+    </div>
+</#macro>
+
+<@Comment data=data></@Comment>
