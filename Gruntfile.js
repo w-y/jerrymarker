@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['src/fix-ie.js', 'src/parser.js', 'src/util.js', 'src/ast.js', 'src/main.js'],
+        src: ['src/fix-ie.js', 'src/parser.js', 'src/util.js', 'src/ast-lib.js', 'src/ast.js', 'src/main.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       files: ['test/**/*.html']
     },
     jshint: {
-      files: ['Gruntfile.js', 'src/ast.js', 'src/util.js', 'src/main.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'src/ast.js', 'src/ast-lib.js', 'src/main.js', 'test/**/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -73,5 +73,4 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['jshint', 'build', 'concat', 'uglify']);
 
   grunt.registerTask('generate', ['jshint', 'concat', 'uglify']);
-  grunt.registerTask('xxx', ['jshint', 'concat', 'uglify']);
 };

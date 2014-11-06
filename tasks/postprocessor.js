@@ -36,7 +36,7 @@ module.exports = function(grunt) {
             file.write(dest, output);
 
             fs.unlinkSync(src);
-            grunt.log.oklns('preprocessor ok ' + dest);
+            grunt.log.oklns('postprocessor ok ' + dest);
         });
     });
 };

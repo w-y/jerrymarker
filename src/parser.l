@@ -123,7 +123,7 @@
 
 "<@"[a-zA-Z]*                       %{
                                         yytext = yytext.slice(2);
-                                        this.yy.util.stack.push(yytext);
+                                        this.yy.util._lexStack.push(yytext);
                                         this.begin('custom_drt_start');
                                         return 'CUSTOM_START';
                                     %}
@@ -133,11 +133,11 @@
                                         return 'CUSTOM_START_END';
                                     %}
 <custom_drt_content>"</@"[a-zA-Z]*">"   %{
-                                        var top = this.yy.util.stack.slice(-1);
+                                        var top = this.yy.util._lexStack.slice(-1);
                                         if (top.length > 0) {
                                             var custom = yytext.slice(3,-1);
                                             if (top[0] === custom) {
-                                                this.yy.util.stack.pop();
+                                                this.yy.util._lexStack.pop();
                                                 this.popState();
                                                 return 'CUSTOM_END';
                                             }

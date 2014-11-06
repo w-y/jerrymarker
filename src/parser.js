@@ -1031,7 +1031,7 @@ case 48:
 break;
 case 49:
                                         yy_.yytext = yy_.yytext.slice(2);
-                                        this.yy.util.stack.push(yy_.yytext);
+                                        this.yy.util._lexStack.push(yy_.yytext);
                                         this.begin('custom_drt_start');
                                         return 75;
                                     
@@ -1043,11 +1043,11 @@ case 50:
                                     
 break;
 case 51:
-                                        var top = this.yy.util.stack.slice(-1);
+                                        var top = this.yy.util._lexStack.slice(-1);
                                         if (top.length > 0) {
                                             var custom = yy_.yytext.slice(3,-1);
                                             if (top[0] === custom) {
-                                                this.yy.util.stack.pop();
+                                                this.yy.util._lexStack.pop();
                                                 this.popState();
                                                 return 77;
                                             }
