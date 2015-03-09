@@ -13,7 +13,7 @@
                                                                                     this.popState();
                                                                                     return 'CLOSEBRACE';
                                                                                 %}
-"}"                                  %{
+<interpolation>"}"                  %{
                                         this.popState();
                                         return '}';
                                     %}
@@ -23,7 +23,7 @@
 
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"true"                      return 'TRUE'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t\n]*"false"                     return 'FALSE'
-<interpolation,if_drt,list_drt,macro_drt,assign_drt,exp,array,hash,custom_drt_start>[a-zA-Z][a-zA-Z_0-9]*        %{
+<interpolation,if_drt,list_drt,macro_drt,assign_drt,exp,array,hash,custom_drt_start>[_a-zA-Z][a-zA-Z_0-9]*        %{
                                                                                         return 'IDENTIFIER';
                                                                                       %}
 <list_drt>".."                                                                        return '..'
@@ -69,7 +69,7 @@
                                                                                 %}
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"."                         return 'DOT'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"=="                        return '=='
-<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"!="                        return '!='
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t]*"!="                        return '!='
 <assign_drt>"="                                                                 return '='
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>[ \t]*"!"                   return '!'
 
@@ -77,6 +77,8 @@
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"?html"[ \t]*               return '?html'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"?string"[ \t]*             return '?string'
 <interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"?keys"[ \t]*             return '?keys'
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"?size"[ \t]*             return '?size'
+<interpolation,if_drt,list_drt,assign_drt,exp,array,hash>"?index_of"[ \t]*             return '?index_of'
 
 "<#if"                              %{
                                         this.begin('if_drt');
@@ -163,7 +165,7 @@
 %left '%'
 %left '*' '/'
 %left '='
-%left '??' '?html' '?string' '?keys'
+%left '??' '?html' '?string' '?keys' '?size' '?index_of'
 
 %right UMINUS
 %right NOT

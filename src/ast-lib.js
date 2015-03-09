@@ -338,6 +338,21 @@
                         return util.htmlspecialchars((traverseExpression(l.v1, null, envOp)));
                     case 'keys':
                         return util.getKeys(traverseExpression(l.v1, null, envOp));
+                    case 'size':
+                        temp = traverseExpression(l.v1, null, envOp);
+                        if (temp) {
+                            return temp.length;
+                        }
+                        break;
+                    case 'index_of':
+                        v1 = traverseExpression(l.v1, null, envOp);
+                        v2 = traverseExpression(l.v2, null, envOp);
+
+                        if (v1 && v2) {
+                            return v1.indexOf(v2);
+                        }
+
+                        break;
                     case '||' :
                         return traverseExpression(l.v1, null, envOp) || traverseExpression(l.v2, null, envOp);
                     case '&&' :

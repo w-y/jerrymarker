@@ -98,6 +98,12 @@ contents
     | e '?keys' {
         $$ = new yy.ast.ExpressionNode('keys', $1);
     }
+    | e '?size' {
+        $$ = new yy.ast.ExpressionNode('size', $1);
+    }
+    | e '?index_of' '(' e ')' {
+        $$ = new yy.ast.ExpressionNode('index_of', $1, $4);
+    }
     | e '?string' '(' e ',' e ')' {
         $$ = new yy.ast.ExpressionNode('trueset', $1, $4, $6);
     }
