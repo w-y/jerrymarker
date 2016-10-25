@@ -1,6 +1,6 @@
 {
   "name": "jerrymarker",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "jerrymarker is a simple javascript template engine (Jerrymarker = javascript + freemarker-- on same day.)",
   "repository": {
     "type": "git",
