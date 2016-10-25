@@ -1,9 +1,11 @@
 {
   "name": "jerrymarker",
-  "barename": "jerrymarker",
   "version": "0.0.1",
   "description": "jerrymarker is a simple javascript template engine (Jerrymarker = javascript + freemarker-- on same day.)",
-  "homepage": "http://www.jerrymarker.com/",
+  "repository": {
+    "type":"git",
+    "url": "https://github.com/w-y/jellymarker"
+  },
   "author": "w-y",
   "license": "MIT",
   "devDependencies": {
@@ -23,6 +25,7 @@
     "jerrymarker": "bin/jerrymarker"
   },
   "scripts": {
-    "test": "grunt"
+    "build": "grunt build",
+    "prepublish": "grunt"
   }
 }
