@@ -1,9 +1,9 @@
 {
   "name": "jerrymarker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "jerrymarker is a simple javascript template engine (Jerrymarker = javascript + freemarker-- on same day.)",
   "repository": {
-    "type":"git",
+    "type": "git",
     "url": "https://github.com/w-y/jellymarker"
   },
   "author": "w-y",
@@ -13,12 +13,12 @@
     "grunt-cli": "~0.1.10",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-qunit" : "~0.5.2",
+    "grunt-contrib-qunit": "~0.5.2",
     "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-watch" : "~v0.6.1",
+    "grunt-contrib-watch": "~v0.6.1",
     "jison": "~0.4.13",
     "ebnf-parser": "*",
-    "lex-parser" : "*"
+    "lex-parser": "*"
   },
   "main": "lib/index.js",
   "scripts": {
