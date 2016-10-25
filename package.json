@@ -20,7 +20,7 @@
     "ebnf-parser": "*",
     "lex-parser": "*"
   },
-  "main": "lib/index.js",
+  "main": "dist/jerrymarker.js",
   "scripts": {
     "build": "grunt build",
     "prepublish": "grunt"
