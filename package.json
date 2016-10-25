@@ -18,12 +18,9 @@
     "grunt-contrib-watch" : "~v0.6.1",
     "jison": "~0.4.13",
     "ebnf-parser": "*",
-    "lex-parser" : ""
+    "lex-parser" : "*"
   },
   "main": "lib/index.js",
-  "bin": {
-    "jerrymarker": "bin/jerrymarker"
-  },
   "scripts": {
     "build": "grunt build",
     "prepublish": "grunt"
