@@ -5,14 +5,14 @@ Jerrymarker is an open-source template engine in javascript. Based on the parser
 
 Jerrymarker's target is **"jerrymarker = javascript + freemarker-- ++"**.
 
-Jerrymarker's preject site: http://www.jerrymarker.com.
+Jerrymarker's preject site: http://w-y.github.io/jerrymarker/site/index.html.
 
 ## Building & Installing
     grunt build  //to generate the parser javascript from lex/yacc rule
 
     grunt  //concat the parser and other util codes to generate the dist js files
 
-Installing jerrymarker is easy now. Simple use the javascript from the dist folder. Or just download the javascript from [project site] (http://www.jerrymarker.com).
+Installing jerrymarker is easy now. Simple use the javascript from the dist folder. Or just download the javascript from [project site] (http://w-y.github.io/jerrymarker/site/index.html).
 
 ## Getting Start
 Jerrymarker templates look like HTML, with embeded interpolations and directives.
