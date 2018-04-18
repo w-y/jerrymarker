@@ -1,0 +1,546 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jerrymarker - template engine in javascript </title>
+<script src="http://yvloustatic.u.qiniudn.com/source-sans-pro.js"></script>
+
+<style type="text/css">
+body {
+    margin: 0;
+    padding: 0;
+    font-family: source-sans-pro, sans-serif, Microsoft Yahei,Hiragino Sans GB,WenQuanYi Micro Hei;
+}
+a {
+    text-decoration: none;
+}
+body h1 {
+    margin: 0;
+    padding: 0;
+}
+#header {
+    height: 150px;
+}
+#header-container {
+    width: 1000px;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+#title {
+    text-align: center;
+    line-height: 140px;
+    font-size: 32px;
+    position: relative;
+    font-weight: 200;
+}
+#subtitle {
+    font-size: 16px;
+    margin-top: 10px;
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    margin-left: -88px;
+}
+#logo {
+    width: 197px;
+    height: 160px;
+    background: url(jerrymarker.png);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#beta {
+    font-size: 12px;
+    position: absolute;
+    left: 50%;
+    top: 60px;
+    margin-left: 85px;
+}
+.hline {
+    border-top: solid 2px #000;
+    line-height: 0;
+    height: 0;
+    border-bottom: solid 2px #ddd;
+}
+#fork-github img{
+    width:149px;
+    height:149px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+#content-wrapper {
+    width:1000px;
+    margin: 20px auto;
+}
+#content {
+    margin-left: 115px;
+    width:800px;
+}
+#intro {
+    margin: 0 auto;
+}
+.enphasize {
+    font-weight: 600;
+}
+#download {
+    text-align: center;
+    margin: 40px 0 20px 0;
+}
+#download a {
+    color: #000;
+    font-size: 24px;
+    border: solid 1px #ddd;
+    padding: 5px;
+}
+</style>
+</head>
+
+<body>
+<a id="fork-github"  href="https://github.com/w-y/jerrymarker">
+    <img alt="Fork me on GitHub" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" />
+</a>
+<div id="header" >
+    <div id="header-container">
+        <div id="logo" class="png_bg">
+        </div>
+        <h1 id="title">
+            <i>jerrymarker</i>
+        </h1>
+        <div id="beta">beta</div>
+        <div id="subtitle">just another javascript template engine</div>
+    </div>
+</div>
+<div class="hline">
+</div>
+
+<div id="content-wrapper">
+    <div id="content">
+        <div id="intro">
+            <p>
+            jerrymarker是一个基于jison的javascript模板引擎，类似于java中的freemarker，他可以在web或者node上运行。最初编写jerrymarker是为了使java和node应用能够共用一套模板。
+            </p>
+            <p>项目目标: "jerrymarker = javascript + freemarker-- ++".</p>
+            <p>项目主页: http://www.jerrymarker.com.</p>
+        </div>
+
+        <div id="download">
+
+            <a href="http://www.jerrymarker.com/dist/jerrymarker-v0.2.0.min.js">Download:0.2.0</a>
+
+        </div>
+
+        <div class="card">
+            <h1>Building && Installing</h1>
+            <div class="hline"></div>
+            <p class="description">
+                <pre style="background:#f9f9f9;color:#080808">git clone https://github.com/w-y/jerrymarker.git
+
+<span style="color:#693a17">cd</span> jerrymarker
+
+grunt  //构建后的代码生成在dist目录中
+                </pre>
+                <p>或者可以直接从<a href="https://github.com/w-y/jerrymarker">github</a>下载最新版本。</p>
+                </p>
+        </div>
+
+        <div class="card">
+            <h1>Getting Start</h1>
+            <div class="hline"></div>
+            <p class="description">
+                <p>jerrymarker写起来看起来很像HTML（用过freemarker就更加熟悉了），只不过多了interpolation和 directives。</p>
+                <pre style="background:#f9f9f9;color:#080808">&lt;div class<span style="color:#794938">=</span><span style="color:#0b6125">"entry"</span> >
+    &lt;#<span style="color:#794938">if</span> job <span style="color:#794938">=</span><span style="color:#794938">=</span> <span style="color:#0b6125">"programmer"</span> >
+        Hello, ${<span style="color:#693a17">name</span>}
+    &lt;<span style="color:#794938">/</span>#<span style="color:#794938">if</span>>
+&lt;<span style="color:#794938">/</span>div>
+                </pre>
+                <p>上面的<#if>就是directive，而${name}是一个 interpolation表达式。</p>
+            </p>
+
+            <h2>在web页面上使用</h2>
+            <p class="description">
+                <p>web页面上可以直接用字符串来作为模板，推荐把模板写到script标签里面，这样更容易修改和维护。</p>
+                <pre style="background:#f9f9f9;color:#080808">&lt;<span style="color:#bf4f24">script</span> <span style="color:#bf4f24">id</span><span style="color:#794938">=</span><span style="color:#0b6125">"book"</span> <span style="color:#bf4f24">type</span>=<span style="color:#0b6125">"text/x-jerrymarker-template"</span> >
+    <span style="color:#794938">&lt;</span>h2<span style="color:#794938">></span><span style="color:#794938">$</span>{title}<span style="color:#794938">&lt;</span>/h2<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>h4<span style="color:#794938">></span>by <span style="color:#794938">$</span>{author.<span style="color:#b4371f">name</span>}(<span style="color:#794938">$</span>{author.d1} <span style="color:#794938">~</span> <span style="color:#794938">$</span>{author.d2})<span style="color:#794938">&lt;</span>/h4<span style="color:#794938">></span>
+&lt;/<span style="color:#bf4f24">script</span>>
+                </pre>
+                <p>使用方法如下：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#a71d5d;font-style:italic">var</span> nd <span style="color:#794938">=</span> <span style="color:#691c97">document</span>.<span style="color:#693a17">getElementById</span>(<span style="color:#0b6125">'book'</span>);
+<span style="color:#a71d5d;font-style:italic">var</span> source <span style="color:#794938">=</span> nd.innerHTML;
+<span style="color:#a71d5d;font-style:italic">var</span> template <span style="color:#794938">=</span> jerrymarker.<span style="color:#693a17">compile</span>(source);
+                </pre>
+                <p>传递一个context作为模板渲染的参数：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#a71d5d;font-style:italic">var</span> book <span style="color:#794938">=</span> {
+    title: <span style="color:#0b6125">"Pride and Prejudice"</span>,
+    author: {
+        name: <span style="color:#0b6125">"Jane Austen"</span>,
+        d1: <span style="color:#811f24;font-weight:700">1775</span>,
+        d2: <span style="color:#811f24;font-weight:700">1817</span>
+    }
+};
+
+<span style="color:#a71d5d;font-style:italic">var</span> html <span style="color:#794938">=</span> template(book);
+                </pre>
+                <p>输出为：</p>
+                <pre style="background:#f9f9f9;color:#080808">&lt;<span style="color:#bf4f24">h2</span>> Pride and Prejudice &lt;/<span style="color:#bf4f24">h2</span>>
+&lt;<span style="color:#bf4f24">h4</span>> by Jane Austen(1775 ~ 1817) &lt;/<span style="color:#bf4f24">h4</span>>
+                </pre>
+            </p>
+            <h2>在node上使用</h2>
+            <p class="description">
+                <p>node上只需要把jerrymarker的文件require进来：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#a71d5d;font-style:italic">var</span> jerrymarker <span style="color:#794938">=</span> require (<span style="color:#0b6125">'jerrymarker.js'</span>);
+<span style="color:#a71d5d;font-style:italic">var</span> source <span style="color:#794938">=</span> <span style="color:#0b6125">'Hello ${name}!'</span>;
+<span style="color:#a71d5d;font-style:italic">var</span> template <span style="color:#794938">=</span> jerrymarker.<span style="color:#693a17">compile</span>(source);
+
+<span style="color:#bf4f24">console</span><span style="color:#693a17">.log</span>(template({name: <span style="color:#0b6125">'Bob'</span>}));
+                </pre>
+                <p>目录结构:</p>
+                <pre style="background:#f9f9f9;color:#080808">ls  .
+test.js
+node_modules/jerrymarker.js
+                </pre>
+                <p>通过node运行：</p>
+                <pre style="background:#f9f9f9;color:#080808">node test.js
+                </pre>
+                <p>输出：</p>
+                <pre style="background:#f9f9f9;color:#080808">Hello Bob<span style="color:#794938">!</span>
+                </pre>
+            </p>
+        </div>
+        <div class="card">
+            <h1>Values & Types</h1>
+            <div class="hline"></div>
+            <p class="description">
+                <p>jerrymarker目前支持数字，字符串，布尔，序列（sequence)，字典（hash)这5种类型。</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign a <span style="color:#794938">=</span> <span style="color:#811f24;font-weight:700">100</span> <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign b <span style="color:#794938">=</span> <span style="color:#811f24;font-weight:700">0.01</span> <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign c <span style="color:#794938">=</span> <span style="color:#0b6125">'string'</span> <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign d <span style="color:#794938">=</span> <span style="color:#0b6125">"string"</span> <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign e <span style="color:#794938">=</span> <span style="color:#811f24;font-weight:700">true</span> <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign f <span style="color:#794938">=</span> [<span style="color:#811f24;font-weight:700">3</span>,<span style="color:#811f24;font-weight:700">2</span>,<span style="color:#811f24;font-weight:700">1</span>, <span style="color:#0b6125">'go'</span>] <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign g <span style="color:#794938">=</span> {<span style="color:#0b6125">"name"</span>:<span style="color:#0b6125">"Bob"</span>, age:<span style="color:#811f24;font-weight:700">21</span>} <span style="color:#794938">></span>
+                </pre>
+                <p>和常见的编程语言类似，变量的词法是字母开头+数字或者字母，字符串支持单/双引号。字典里面的键值按字符串处理（所以可以省略引号）。</p>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Interpolations</h1>
+            <div class="hline"></div>
+
+            <p class="description">
+                <p>Interpolations沿用了freemarker中的概念，把表达式的计算结果插入到输出中。</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">$</span>{expression}
+                </pre>
+                <p>示例如下：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">$</span>{(<span style="color:#811f24;font-weight:700">100</span> <span style="color:#794938">+</span> x) <span style="color:#794938">*</span> <span style="color:#794938">-</span>y}
+                </pre>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Expressions</h1>
+            <div class="hline"></div>
+
+            <p class="description">
+                <p>Interpolations或者Directive中都会用到表达式，Interpolations中的表达式：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">$</span>{x<span style="color:#794938">*</span><span style="color:#811f24;font-weight:700">2</span><span style="color:#794938">+</span>(<span style="color:#811f24;font-weight:700">3</span><span style="color:#794938">+</span><span style="color:#811f24;font-weight:700">4</span>)<span style="color:#794938">*</span><span style="color:#811f24;font-weight:700">5</span>}
+                </pre>
+                <p>Directive中的表达式：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> expression<span style="color:#794938">></span>...<span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> ((x <span style="color:#794938">&lt;</span> <span style="color:#811f24;font-weight:700">100</span>) <span style="color:#794938">&amp;</span><span style="color:#794938">&amp;</span> <span style="color:#794938">!</span>(x <span style="color:#794938">&lt;=</span> <span style="color:#811f24;font-weight:700">50</span>)) <span style="color:#794938">></span>
+    x is greater than <span style="color:#811f24;font-weight:700">50</span> and less than <span style="color:#811f24;font-weight:700">100</span>
+<span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+                </pre>
+                <p>jerrymarker支持+. -. *, /, %, !, (), '>', '<', '!=', '>=', '=>', '&&', '||'这些常见的运算符。除此之外，还有一些特殊的内置运算符，比如?和!开头的。例如?html用于转义为html，目前支持freemarker中的一些常见的build-in。
+                </p>
+                <p>使用?html转义示例：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign x <span style="color:#794938">=</span> <span style="color:#0b6125">"&lt;span>Hi&lt;/span>"</span> <span style="color:#794938">></span>
+<span style="color:#794938">$</span>{x}
+
+<span style="color:#794938">&lt;</span>#assign y <span style="color:#794938">=</span> <span style="color:#0b6125">"&lt;span>Hi&lt;/span>"</span>?html <span style="color:#794938">></span>
+<span style="color:#794938">$</span>{y}
+                </pre>
+                <p>分别输出：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>span<span style="color:#794938">></span>Hi<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+
+<span style="color:#794938">&amp;</span>lt;span<span style="color:#794938">&amp;</span>gt;Hi<span style="color:#794938">&amp;</span>lt;/span<span style="color:#794938">&amp;</span>gt;
+                </pre>
+                <p>??返回变量是否存在：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> x?? <span style="color:#794938">&amp;</span><span style="color:#794938">&amp;</span> x <span style="color:#794938">&lt;</span> <span style="color:#811f24;font-weight:700">100</span> <span style="color:#794938">></span>
+    x exists and x <span style="color:#794938">&lt;</span> <span style="color:#811f24;font-weight:700">100</span>
+<span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+                </pre>
+                <p>在interploation可以使用x!y：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">$</span>{x<span style="color:#794938">!</span><span style="color:#811f24;font-weight:700">100</span>}  <span style="color:#5a525f;font-style:italic">//if x exists output x or output 100</span>
+                </pre>
+                <p><strong>Warning!</strong> 在directive中使用'>'时需要加上括号，否则'>'会被误认为是关闭标签，在freemarker也有这个问题。
+</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#5a525f;font-style:italic">//wrong</span>
+<span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> x <span style="color:#794938">></span> <span style="color:#811f24;font-weight:700">100</span> <span style="color:#794938">></span>
+    <span style="color:#794938">$</span>{x}
+<span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+
+<span style="color:#5a525f;font-style:italic">//corrected</span>
+<span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> (x <span style="color:#794938">></span> <span style="color:#811f24;font-weight:700">100</span>) <span style="color:#794938">></span>
+    <span style="color:#794938">$</span>{x}
+<span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+                </pre>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Directive List</h1>
+            <div class="hline"></div>
+
+            <p class="description">
+            <p>模板中用Directive List用来支持循环，jerrymarker支持两种使用方式。第一种方式通过x..y一个范围进行循环：</p>
+            </p>
+            <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign x <span style="color:#794938">=</span> <span style="color:#811f24;font-weight:700">1</span> <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#list x..<span style="color:#811f24;font-weight:700">10</span> as i<span style="color:#794938">></span>
+    <span style="color:#794938">$</span>{i}
+<span style="color:#794938">&lt;</span>/#list<span style="color:#794938">></span>
+            </pre>
+            <p>输出为：</p>
+            <pre style="background:#f9f9f9;color:#080808"><span style="color:#811f24;font-weight:700">1</span>
+<span style="color:#811f24;font-weight:700">2</span>
+<span style="color:#811f24;font-weight:700">3</span>
+            </pre>
+            <p>第二种方式是对一个序列类型(sequence)的内容进行循环：</p>
+            <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>div<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>ul<span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>#list animals as animal<span style="color:#794938">></span>
+            <span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> animal.cate <span style="color:#794938">==</span> <span style="color:#0b6125">"insect"</span> <span style="color:#794938">></span>
+                <span style="color:#794938">&lt;</span>li<span style="color:#794938">></span><span style="color:#794938">$</span>{animal.<span style="color:#b4371f">name</span>}<span style="color:#794938">&lt;</span>/li<span style="color:#794938">></span>
+            <span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>/#list<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>/ul<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/div<span style="color:#794938">></span>
+            </pre>
+            <p>
+                传入的context为：
+            </p>
+            <pre style="background:#f9f9f9;color:#080808"><span style="color:#a71d5d;font-style:italic">var</span> context <span style="color:#794938">=</span> {
+    animals: [
+        {
+            cate: <span style="color:#0b6125">'insect'</span>,
+            name: <span style="color:#0b6125">'fly'</span>
+        },
+        {
+            cate: <span style="color:#0b6125">'insect'</span>,
+            name: <span style="color:#0b6125">'butterfly'</span>
+        },
+        {
+            cate: <span style="color:#0b6125">'mammal'</span>,
+            name: <span style="color:#0b6125">'panda'</span>
+        }
+    ]
+}
+            </pre>
+
+            <p>输出为：</p>
+            <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>ul<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>li<span style="color:#794938">></span>fly<span style="color:#794938">&lt;</span>/li<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>li<span style="color:#794938">></span>butterfly<span style="color:#794938">&lt;</span>/li<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/ul<span style="color:#794938">></span>
+            </pre>
+
+            <p>示例：遍历字典类型（hash）</p>
+            <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign x <span style="color:#794938">=</span> {name:<span style="color:#0b6125">"Bob"</span>, age:<span style="color:#811f24;font-weight:700">26</span>, job:<span style="color:#0b6125">"programmer"</span>} <span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#assign keys <span style="color:#794938">=</span> x?keys <span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#list keys as key <span style="color:#794938">></span>
+    <span style="color:#794938">$</span>{x[key]}
+<span style="color:#794938">&lt;</span>/#list<span style="color:#794938">></span>
+            </pre>
+            <p>结果为：</p>
+            <pre style="background:#f9f9f9;color:#080808">Bob
+<span style="color:#811f24;font-weight:700">26</span>
+programmer
+            </pre>
+        </div>
+
+        <div class="card">
+            <h1>Directive Assign</h1>
+            <div class="hline"></div>
+            <p class="description">
+                <p>Directive Assign用来给变量赋值，形式为<#assign name=value>, 和freemarker有些不同，目前一次只能赋值一个变量，多次赋值还需要多个assign，还不能支持<#assign n1=v1 n2=v2 n3=v3 ..>。</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign counter <span style="color:#794938">=</span> <span style="color:#811f24;font-weight:700">0</span><span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#list <span style="color:#811f24;font-weight:700">1</span>..<span style="color:#811f24;font-weight:700">10</span> as i<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>#<span style="color:#794938">if</span> i <span style="color:#794938">%</span> <span style="color:#811f24;font-weight:700">2</span> <span style="color:#794938">==</span> <span style="color:#811f24;font-weight:700">0</span> <span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>#assign counter <span style="color:#794938">=</span> counter <span style="color:#794938">+</span> <span style="color:#811f24;font-weight:700">1</span> <span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>/#<span style="color:#794938">if</span><span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/#list<span style="color:#794938">></span>
+the <span style="color:#691c97">event</span> number is <span style="color:#794938">$</span>{counter}
+                </pre>
+                <p>输出如下：</p>
+                <pre style="background:#f9f9f9;color:#080808">the <span style="color:#691c97">event</span> number is <span style="color:#811f24;font-weight:700">5</span>
+                </pre>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Directive Macro</h1>
+            <div class="hline"></div>
+            <p class="description">
+                <p>Directive Macro是未来对jerrymarker进行扩展的一个重要的入口，和freemarker类似，jerrymarker中支持通过<#macro @macroName>来注册一个宏，然后通过<@macroName />或者<@macroName>来进行引用。</p>
+                <p>示例：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#macro helloworld<span style="color:#794938">></span>
+    Hello world<span style="color:#794938">!</span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>@helloworld/<span style="color:#794938">></span>
+                </pre>
+                <p>输出： </p>
+                <pre style="background:#f9f9f9;color:#080808">Hello world<span style="color:#794938">!</span>
+                </pre>
+                <p>jerrymaker中在宏声明的时候不需要传入额外参数，而在引用宏传入，并且可以在宏中通过内置的this.props引用来使用。</p>
+                <p>示例： </p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#macro greet<span style="color:#794938">></span>
+Hello <span style="color:#794938">$</span>{<span style="color:#234a97">this</span>.props.<span style="color:#b4371f">name</span>}<span style="color:#794938">!</span>
+<span style="color:#794938">&lt;</span>@greet name<span style="color:#794938">=</span><span style="color:#0b6125">"Bob"</span> /<span style="color:#794938">></span>
+                </pre>
+                <p>输出： </p>
+                <pre style="background:#f9f9f9;color:#080808">Hello Bob<span style="color:#794938">!</span>
+                </pre>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Scope</h1>
+            <div class="hline"></div>
+
+            <p class="description">
+                <p>在jerrymarker中引入了作用域的概念，目前的实现中directive list和macro都会创建一个新的作用域来保持当前的环境变量和缓冲区，这样可以让directive中可以引用局部和外部的变量。</p>
+                <p>示例1：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign name<span style="color:#794938">=</span><span style="color:#0b6125">"Bob"</span><span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#macro greet<span style="color:#794938">></span>
+    Hello <span style="color:#794938">$</span>{name} <span style="color:#794938">!</span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>@greet/<span style="color:#794938">></span>
+                </pre>
+                <p>输出：</p>
+                <pre style="background:#f9f9f9;color:#080808">Hello Bob<span style="color:#794938">!</span>
+                </pre>
+                <p>示例2：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign name<span style="color:#794938">=</span><span style="color:#0b6125">"Bob"</span><span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>#macro greet<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>#assign name<span style="color:#794938">=</span><span style="color:#0b6125">"John"</span><span style="color:#794938">></span>
+
+    Hello <span style="color:#794938">$</span>{name} <span style="color:#794938">!</span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>@greet/<span style="color:#794938">></span>
+                </pre>
+                <p>输出：</p>
+                <pre style="background:#f9f9f9;color:#080808">Hello John<span style="color:#794938">!</span>
+                </pre>
+                <p>jerrymarker会动态的沿着作用域链向上查找变量的值，因此嵌套更深的作用域可以引用上层的作用域中的变量。</p>
+
+                <p>示例3中的${greeting}和${this.props.data}的值是相同的，${greeting}引用了list创建的作用域中变量，而${this.props.data}是传入到macro作用域中的变量：
+                </p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign people <span style="color:#794938">=</span> [<span style="color:#0b6125">"John"</span>, <span style="color:#0b6125">"Bob"</span>] <span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#macro greet<span style="color:#794938">></span>
+    <span style="color:#811f24;font-weight:700">1</span>. <span style="color:#794938">$</span>{greeting}
+    <span style="color:#811f24;font-weight:700">2</span>. <span style="color:#794938">$</span>{<span style="color:#234a97">this</span>.props.<span style="color:#b4371f">data</span>}
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#list people as person<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>#assign greeting <span style="color:#794938">=</span> <span style="color:#0b6125">"Hello"</span> <span style="color:#794938">+</span> person<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>@greet data<span style="color:#794938">=</span>greeting /<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/#list<span style="color:#794938">></span>
+                </pre>
+                <p>
+                    输出：
+                </p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#811f24;font-weight:700">1</span>. Hello John
+<span style="color:#811f24;font-weight:700">2</span>. Hello John
+
+<span style="color:#811f24;font-weight:700">1</span>. Hello Bob
+<span style="color:#811f24;font-weight:700">2</span>. Hello Bob
+                </pre>
+                <p>一个稍复杂的示例：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>#assign data<span style="color:#794938">=</span> [
+    {author: <span style="color:#0b6125">"Pete Hunt"</span>, text: <span style="color:#0b6125">"This is one comment"</span>},
+    {author: <span style="color:#0b6125">"Jordan Walke"</span>, text: <span style="color:#0b6125">"This is *another* comment"</span>} ] <span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#macro Comment<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>span<span style="color:#794938">></span><span style="color:#794938">$</span>{<span style="color:#234a97">this</span>.props.comment.author}<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>span<span style="color:#794938">></span><span style="color:#794938">$</span>{<span style="color:#234a97">this</span>.props.comment.<span style="color:#b4371f">text</span>}<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#macro CommentList<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>ul<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>#list <span style="color:#234a97">this</span>.props.<span style="color:#b4371f">data</span> as d <span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>li<span style="color:#794938">></span>
+            <span style="color:#794938">&lt;</span>@Comment comment<span style="color:#794938">=</span>d /<span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>/li<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>/#list<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>/ul<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#macro CommentForm<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>form<span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>textarea name<span style="color:#794938">=</span><span style="color:#0b6125">"content"</span> <span style="color:#794938">></span><span style="color:#794938">&lt;</span>/textarea<span style="color:#794938">></span>
+        <span style="color:#794938">&lt;</span>input type<span style="color:#794938">=</span><span style="color:#0b6125">"submit"</span> value<span style="color:#794938">=</span><span style="color:#0b6125">"submit"</span> /<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>/form<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>#macro CommentBox<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>div <span style="color:#a71d5d;font-style:italic">class</span><span style="color:#794938">=</span><span style="color:#0b6125">"container"</span><span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>@CommentList /<span style="color:#794938">></span>
+    <span style="color:#794938">&lt;</span>@CommentForm /<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/div<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/#macro<span style="color:#794938">></span>
+
+<span style="color:#794938">&lt;</span>@CommentBox data<span style="color:#794938">=</span>data /<span style="color:#794938">></span>
+                </pre>
+                <p>输出：</p>
+                <pre style="background:#f9f9f9;color:#080808"><span style="color:#794938">&lt;</span>div <span style="color:#a71d5d;font-style:italic">class</span><span style="color:#794938">=</span><span style="color:#0b6125">"container"</span><span style="color:#794938">></span>
+     <span style="color:#794938">&lt;</span>ul<span style="color:#794938">></span>
+         <span style="color:#794938">&lt;</span>li<span style="color:#794938">></span>
+             <span style="color:#794938">&lt;</span>span<span style="color:#794938">></span>Pete Hunt<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+             <span style="color:#794938">&lt;</span>span<span style="color:#794938">></span>This is one comment<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+         <span style="color:#794938">&lt;</span>/li<span style="color:#794938">></span>
+         <span style="color:#794938">&lt;</span>li<span style="color:#794938">></span>
+             <span style="color:#794938">&lt;</span>span<span style="color:#794938">></span>Jordan Walke<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+             <span style="color:#794938">&lt;</span>span<span style="color:#794938">></span>This is <span style="color:#794938">*</span>another<span style="color:#794938">*</span> comment<span style="color:#794938">&lt;</span>/span<span style="color:#794938">></span>
+         <span style="color:#794938">&lt;</span>/li<span style="color:#794938">></span>
+     <span style="color:#794938">&lt;</span>/ul<span style="color:#794938">></span>
+     <span style="color:#794938">&lt;</span>form<span style="color:#794938">></span>
+         <span style="color:#794938">&lt;</span>textarea name<span style="color:#794938">=</span><span style="color:#0b6125">"content"</span> <span style="color:#794938">></span><span style="color:#794938">&lt;</span>/textarea<span style="color:#794938">></span>
+         <span style="color:#794938">&lt;</span>input type<span style="color:#794938">=</span><span style="color:#0b6125">"submit"</span> value<span style="color:#794938">=</span><span style="color:#0b6125">"submit"</span> /<span style="color:#794938">></span>
+     <span style="color:#794938">&lt;</span>/form<span style="color:#794938">></span>
+<span style="color:#794938">&lt;</span>/div<span style="color:#794938">></span>
+                </pre>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Reference</h1>
+            <div class="hline"></div>
+
+            <p class="description">
+                <p>[1] freemarker, <a href="http://freemarker.org">http://freemarker.org</a></p>
+                <p>[2] jison, <a href="http://zaach.github.io/jison/">http://zaach.github.io/jison/</a></p>
+                <p>[3] handlebarsjs, <a href="http://handlebarsjs.com">http://handlebarsjs.com</a></p>
+                <br/>
+                <p><a href="https://github.com/w-y/jerrymarker/issues">欢迎各种意见或者建议。</a></p>
+            </p>
+        </div>
+    </div>
+</div>
+<!--[if IE 6]>
+<script src="/DD_belatedPNG/DD_belatedPNG_0.0.8a-min.js"></script>
+<script>
+    DD_belatedPNG.fix('.png_bg');
+</script>
+<![endif]-->
+</body>
+</html>
